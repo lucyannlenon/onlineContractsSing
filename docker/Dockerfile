@@ -89,4 +89,4 @@ RUN chmod +x /usr/local/bin/start-supervisord.sh
 
 #
 ## Command to run the startup script
-CMD ["/usr/bin/supervisord"]
+CMD ["/usr/bin/supervisord", "-c","/etc/supervisor/supervisord.conf"]
