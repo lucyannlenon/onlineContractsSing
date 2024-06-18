@@ -31,7 +31,7 @@ services:
       - ./docker/supervisor.d/messenger-scheduler.conf:/etc/supervisor/conf.d/messenger-scheduler.conf
       - ./docker/supervisor.d/supervisord.conf:/etc/supervisor/supervisord.conf
       - ./bin/console:/usr/bin/app-console
-    entrypoint:
-      "/usr/local/bin/start-supervisord.sh"
+    entrypoint: [ "/usr/local/bin/start-supervisord.sh" ]
+
 
 
