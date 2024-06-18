@@ -79,3 +79,5 @@ RUN sudo apt-get install -y libssh2-1
 RUN sudo pecl install ssh2
 
 RUN docker-php-ext-enable ssh2
+
+RUNT sudo apt-get install supervisor
