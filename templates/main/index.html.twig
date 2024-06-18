@@ -11,7 +11,7 @@
         <form action="{{ path('app_main_post') }}" method="post">
             <div class="mb-3">
                 <label for="username" class="form-label">CPF/CNPJ</label>
-                <input type="text" name="cpf" id="username" class="form-control" required autofocus>
+                <input type="text" name="cpf" id="username" class="form-control" required autofocus maxlength="18" placeholder="CPF ou CNPJ" oninput="applyCpfCnpjMask(this)">
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Chave</label>
@@ -46,5 +46,25 @@
             // Define o valor do campo de entrada
             input.value = value;
         }
+        function applyCpfCnpjMask(input) {
+            // Remove qualquer caractere que não seja dígito
+            let value = input.value.replace(/\D/g, '');
+
+            // Aplica a máscara de CPF ou CNPJ
+            if (value.length <= 11) { // CPF
+                value = value.replace(/(\d{3})(\d)/, "$1.$2");
+                value = value.replace(/(\d{3})(\d)/, "$1.$2");
+                value = value.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
+            } else { // CNPJ
+                value = value.replace(/^(\d{2})(\d)/, "$1.$2");
+                value = value.replace(/^(\d{2})\.(\d{3})(\d)/, "$1.$2.$3");
+                value = value.replace(/\.(\d{3})(\d)/, ".$1/$2");
+                value = value.replace(/(\d{4})(\d)/, "$1-$2");
+            }
+
+            // Define o valor do campo de entrada
+            input.value = value;
+        }
+
     </script>
 {% endblock %}
