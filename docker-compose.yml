@@ -1,0 +1,30 @@
+version: '3.8'
+#libfontenc1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils
+services:
+
+
+  mysql:
+    image: mysql:5.7
+    volumes:
+      - ./data:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=${DATABASE_NAME}
+      - MYSQL_USER=${DATABASE_USER}
+      - MYSQL_PASSWORD=${DATABASE_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DATABASE_ROOT_PASSWORD}
+    ports:
+      - '3383:3306'
+  php:
+    image: "php8.3-local:1.0"
+    tty: true
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    working_dir: /app
+    depends_on:
+      - mysql
+    ports:
+      #- '8086:80'
+      - '8202:80'
+    volumes:
+      - ./app:/app
+      - ./apache/default.conf:/etc/apache2/sites-available/000-default.conf
