@@ -1,4 +1,5 @@
 #!/bin/bash
+sleep 20
 # Remove stale supervisor socket file if it exists
 SOCKET_FILE=/var/run/supervisor.sock
 
