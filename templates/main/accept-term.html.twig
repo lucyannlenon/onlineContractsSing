@@ -1,0 +1,69 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+
+    <div class="container mt-5">
+
+        <h3 class="text-center mb-4">TERMO DE ACEITE</h3>
+        <p><b>IZI INTERNET E COMUNICAÇÃO LTDA</b>, com sede na Rua Dadá Teixeira,10, Bairro: Parque Invejada,
+            Mutum - Minas Gerais, Cep 36955-000 inscrita no CNPJ sob o número 43.661.026/0001-93, Ato n.3348
+            datado de 25 de Fevereiro de 2022 da ANATEL, publicado no DOU em 03/03/2022.</p>
+
+        <h4>I - CONTRATANTE</h4>
+        <p><strong>Nome:</strong> {{ contractor_name }}</p>
+        <p><strong>Dt. Nasc:</strong> {{ birth_date }}</p>
+        <p><strong>CPF/CNPJ:</strong> {{ cpf_cnpj }}</p>
+        <p><strong>RG/I.E:</strong> {{ rg_ie }}</p>
+        <p><strong>Endereço:</strong> RUA: {{ address }}, Bairro: {{ neighborhood }}, Cidade: {{ city }},
+            CEP: {{ postal_code }}</p>
+        <p><strong>Email:</strong> {{ email }}</p>
+        <p><strong>Telefones:</strong> {{ phones }}</p>
+
+        <h4>II - PLANO DE SERVIÇO</h4>
+        <p><strong>Plano:</strong> {{ plan }}</p>
+        <p><strong>Vigência:</strong> {{ contract_months }} Meses</p>
+        <p><strong>Download / Upload:</strong> {{ download_upload }}</p>
+        <p><strong>Garantia de:</strong> {{ guarantee }}%</p>
+        <p><strong>Dia Do Vencimento:</strong> {{ due_day }}</p>
+
+        <h4>III - VALORES A PAGAR PELO CLIENTE</h4>
+        <p><strong>Valor Da Instalação:</strong> {{ installation_cost |format_currency('BRL') }}</p>
+        <p><strong>Desconto:</strong>{{ discount |format_currency('BRL') }}</p>
+        <p><strong>Total:</strong> {{ total |format_currency('BRL') }}</p>
+
+        <h5>VALORES MENSAIS: {{ total_value  |format_currency('BRL') }}</h5>
+        <div class="row">
+
+            {% for product in products %}
+                <div class="col-2">{{ product.name }} :</div>
+                <div class="col-1"></div>
+                <div class="col-9"> {{ product.value |format_currency('BRL') }}</div>
+            {% endfor %}
+        </div>
+
+        <br/>
+
+        <p>O cliente está ciente e concorda com o contrato que se encontra disponível no site <a
+                    href="http://www.izi.com.br/ctt/{{ contract_name }}">www.izi.com.br/ctt/{{ contract_name }}</a> e
+            registrado junto ao cartório de 1° Oficio da Comarca de Afonso Cláudio - ES, sob o N°4822, Livro b
+            -19; e por estar justo e contratado o cliente assina o presente instrumento, perante as testemunhas
+            abaixo assinadas, para que produza seus efeitos legais e jurídicos.</p>
+
+        {% if signature %}
+            <p>ASSINATURA DIGITAL DO CLIENTE!</p>
+            <pre style="max-width: 800px; border: 1px black dashed;overflow-wrap: break-word; padding: 10px">{{ signature }}</pre>
+            <p><strong>Data de assinatura do contrato:</strong> {{ signature_date }}</p>
+        {% endif %}
+
+    </div>
+    {% if  enable_btn is defined %}
+        <div class="text-center">
+            <a class="btn btn-success btn-lg " href="{{ path(app.request.attributes.get('_route'),
+                app.request.attributes.get('_route_params') |merge({'accept-key': '1'})) }}">Aceitar termo e
+                continuar</a>
+        </div>
+    {% endif %}
+
+{% endblock %}

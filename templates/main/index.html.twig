@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+    <div class="container" style="max-width: 400px">
+        <h1 class="text-center">Assine seu Contrato</h1>
+        {% if error %}
+            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
+        <form action="{{ path('app_main_post') }}" method="post">
+            <div class="mb-3">
+                <label for="username" class="form-label">CPF/CNPJ</label>
+                <input type="text" name="cpf" id="username" class="form-control"  required autofocus>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Chave</label>
+                <input type="text" name="key" id="password" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="birthday" class="form-label">Data de nascimento</label>
+                <input type="text" name="birthday" id="birthday" class="form-control" required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Log in</button>
+        </form>
+    </div>
+{% endblock %}

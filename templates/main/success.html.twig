@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Contrato Assinado{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div class="text-center mt-5">
+            <img src="/img/logo.png" alt="Logo IZI Internet" class="logo">
+            <p class="company-name">IZI Internet</p>
+        </div>
+        <div class="alert alert-success mt-3">
+            <h4 class="alert-heading">Contrato Assinado com Sucesso!</h4>
+            <p>Seu contrato foi assinado com sucesso. Uma cópia em PDF do contrato estará disponível na sua área de assinante dentro de 7 dias.</p>
+            <hr>
+            <p class="mb-0">Obrigado por escolher nossos serviços. Se você tiver alguma dúvida, por favor, não hesite em entrar em contato com nossa equipe de suporte.</p>
+        </div>
+        <div class="contact-info text-center">
+            <p>Email de contato: <a href="mailto:ouvidoria2@izi.com.br">ouvidoria2@izi.com.br</a></p>
+            <p>Telefone de contato: <a href="tel:+553330380066">33 3038-0066</a></p>
+            <p>WhatsApp: <a href="https://wa.me/553330380066" target="_blank">33 3038-0066</a></p>
+        </div>
+    </div>
+    <style>
+        .logo {
+            max-width: 150px;
+            margin-bottom: 20px;
+        }
+        .company-name {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        .contact-info {
+            margin-top: 20px;
+        }
+    </style>
+{% endblock %}
