@@ -81,12 +81,17 @@ RUN sudo pecl install ssh2
 RUN docker-php-ext-enable ssh2
 
 RUN sudo apt-get install  -y supervisor
+
+RUN mkdir -p /var/log/supervisor
+
 COPY supervisor.d/supervisord.conf /etc/supervisor/supervisord.conf
 
-COPY supervisor.d/start-supervisord.sh /usr/local/bin/start-supervisord.sh
-
-RUN chmod +x /usr/local/bin/start-supervisord.sh
-
+CMD ["/usr/bin/supervisord"]
 #
-## Command to run the startup script
-CMD ["/usr/bin/supervisord", "-c","/etc/supervisor/supervisord.conf"]
+#COPY supervisor.d/start-supervisord.sh /usr/local/bin/start-supervisord.sh
+#
+#RUN chmod +x /usr/local/bin/start-supervisord.sh
+#
+##
+### Command to run the startup script
+#CMD ["/usr/bin/supervisord", "-c","/etc/supervisor/supervisord.conf"]
