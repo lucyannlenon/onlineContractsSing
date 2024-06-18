@@ -29,5 +29,5 @@ services:
     volumes:
       - ./:/app
       - ./docker/apache/default.conf:/etc/apache2/sites-available/000-default.conf
-      - ./app/bin/console:/usr/bin/app-console
+      - ./bin/console:/usr/bin/app-console
 
