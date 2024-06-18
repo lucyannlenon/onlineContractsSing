@@ -81,3 +81,6 @@ RUN sudo pecl install ssh2
 RUN docker-php-ext-enable ssh2
 
 RUN sudo apt-get install  -y supervisor
+COPY supervisor.d/supervisord.conf /etc/supervisor/supervisord.conf
+
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
