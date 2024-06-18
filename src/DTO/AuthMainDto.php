@@ -21,4 +21,9 @@ class AuthMainDto
         $time = strtotime($birthday);
         $this->birthday = (new \DateTime())->setTimestamp($time);
     }
+
+    public function getCpf(): string
+    {
+        return preg_replace('/\D/', '', $this->cpf);
+    }
 }
