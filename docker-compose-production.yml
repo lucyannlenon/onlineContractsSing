@@ -2,7 +2,7 @@ version: '3.8'
 #libfontenc1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils
 services:
   mysql:
-    image: percona
+    image: mysql
     restart: always
     volumes:
       - ./db_data:/var/lib/mysql

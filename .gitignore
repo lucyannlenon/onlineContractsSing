@@ -11,3 +11,4 @@
 ###< symfony/framework-bundle ###
 
 /data/
+/db_data/
