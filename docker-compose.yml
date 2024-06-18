@@ -25,7 +25,7 @@ services:
     ports:
       #- '8086:80'
       - '9003:80'
-      - '9004:443'
+    #  - '9004:443'
     volumes:
       - ./app:/app
-      - ./apache/docker/default.conf:/etc/apache2/sites-available/000-default.conf
+      - ./docker/apache/default.conf:/etc/apache2/sites-available/000-default.conf
