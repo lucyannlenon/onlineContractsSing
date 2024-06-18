@@ -1,0 +1,112 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+
+    <div class="container">
+        <div class="term-header">
+            <div class="text-center">
+                <h1>Termo de Concessão Condicional de Benefício</h1>
+            </div>
+            <p><b>IZI INTERNET E COMUNICAÇÃO LTDA</b>, com sede na Rua Dadá Teixeira,10, Bairro: Parque Invejada,
+                Mutum - Minas Gerais, Cep 36955-000 inscrita no CNPJ sob o número 43.661.026/0001-93, Ato n.3348
+                datado de 25 de Fevereiro de 2022 da ANATEL, publicado no DOU em 03/03/2022.</p>
+        </div>
+
+        <div class="term-section">
+            <h3>Qualificação da contratante/ N. Termo de contratação Referente:</h3>
+            <p><strong>Nome:</strong> {{ contractor_name }}</p>
+            <p><strong>Dt. Nasc:</strong> {{ birth_date }}</p>
+            <p><strong>CPF/CNPJ:</strong> {{ cpf_cnpj }}</p>
+            <p><strong>RG/I.E:</strong> {{ rg_ie }}</p>
+            <p><strong>Endereço:</strong> RUA: {{ address }}, Bairro: {{ neighborhood }}, Cidade: {{ city }},
+                CEP: {{ postal_code }}</p>
+            <p><strong>Email:</strong> {{ email }}</p>
+            <p><strong>Telefones:</strong> {{ phones }}</p>
+        </div>
+
+        <div class="term-section">
+            <h3>Considerações Preliminares</h3>
+            <p>1.1 CONSIDERANDO QUE:</p>
+            <p>1.1.1 - O presente Termo de Concessão Condicional de Benefícios encontra-se em consonância com
+                “CONTRATO DE PRESTAÇÃO DE SERVIÇO A INTERNET E SERVIÇOS DE TELECOMUNICAÇÃO MULTIMÍDIA (SCM)”, com TERMO
+                DE CONTRATAÇÃO e respectivo PLANO DE SERVIÇO, todos estes instrumentos formalizados entre partes e que,
+                em conjunto, formam um só instrumento para fins direito, devendo ser lidos e interpretados
+                conjuntamente.</p>
+            <p>1.1.2 - O CONTRATANTE declara que foi facultado ao mesmo optar, antes da contratação, pela celebração de
+                um contrato com CONTRATADA sem percepção de qualquer benefício, hipótese em que não fidelidade
+                contratual.</p>
+        </div>
+
+        <div class="term-section">
+            <h3>BENEFÍCIOS CONCEDIDOS AO CLIENTE:</h3>
+            <p><strong>Valor de desconto na instalação:</strong> R$ {{ installation_cost }}</p>
+            <p><strong>VALORES MENSAIS</strong></p>
+            {% for product in benefits_products %}
+                <p>{{ product.name }}: R$ {{ product.value }}</p>
+            {% endfor %}
+            <p><strong>Data de início do contrato:</strong> {{ signature_date }}</p>
+            <p><strong>TOTAL DOS BENEFÍCIOS (SOMA DE {{ contract_months }} MESES) + INSTALAÇÃO:</strong>
+                R$ {{ total_benefits_value }}</p>
+        </div>
+
+        <div class="term-section">
+            <h3>FIDELIDADE CONTRATUAL</h3>
+            <p>3.1- O presente instrumento formaliza a concessão de desconto e/ou isenção ao Cliente (conforme é
+                definido na cláusula anterior), e em contrapartida, o CLIENTE se vincula (fideliza) contratualmente
+                diante da CONTRATADA pelo período de {{ contract_months }} meses, a contar da assinatura do presente
+                instrumento.</p>
+            <p>3.2- Caso ocorra o pedido de rescisão contratual, imotivada, a pedido do CLIENTE, antes do período de
+                fidelização descrito na cláusula 3.1 acima, o CLIENTE se compromete a pagar em benefícios da CONTRATADA
+                uma multa penal, nos termos abaixo descritos na tabela, de acordo com o mês em que foi formalizado o
+                pedido de rescisão contratual.</p>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>Mês</th>
+                    <th>Percentual da Multa</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for i in 1..contract_months %}
+                    <tr>
+                        <td>{{ i }}º</td>
+                        <td>{{ (100 - ((i - 1) * (100 / (contract_months )))) | round | abs }}%</td>
+                    </tr>
+                {% endfor %}
+
+                </tbody>
+            </table>
+            <p>3.3- Em caso de renovação do “CONTRATO DE PRESTAÇÃO DE SERVIÇO A CONEXÃO A INTERNET E SERVIÇOS DE
+                COMUNICAÇÃO MULTIMÍDIA (SCM)”, e optando as partes pela manutenção dos benefícios antes concedidos ao
+                CLIENTE, fica automaticamente renovado os efeitos do presente instrumento e, por seguinte, fica
+                automaticamente renovada a fidelidade contratual do CLIENTE, pelo prazo adicional de 12 meses.</p>
+        </div>
+        {% if signature %}
+            <p>ASSINATURA DIGITAL DO CLIENTE!</p>
+            <pre style="max-width: 800px; border: 1px black dashed;overflow-wrap: break-word; padding: 10px">{{ signature }}</pre>
+            <p><strong>Data de assinatura do contrato:</strong> {{ signature_date }}</p>
+        {% endif %}
+
+    </div>
+    {% if  enable_btn is defined %}
+        <div class="text-center">
+            <a class="btn btn-success btn-lg " href="{{ path(app.request.attributes.get('_route'),
+                app.request.attributes.get('_route_params') | merge({'accept-key': '1'})) }}">Aceitar termo e continuar</a>
+        </div>
+    {% endif %}
+    <style>
+        .term-header {
+            margin-bottom: 20px;
+        }
+
+        .term-section {
+            margin-bottom: 20px;
+        }
+
+        .term-signature {
+            margin-top: 40px;
+        }
+    </style>
+{% endblock %}
