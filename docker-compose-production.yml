@@ -14,7 +14,6 @@ services:
 #    ports:
 #      - '3383:3306'
   php:
-    restart: always
     build: ./docker
     tty: true
     extra_hosts:
@@ -31,7 +30,9 @@ services:
       - ./docker/supervisor.d/messenger-scheduler.conf:/etc/supervisor/conf.d/messenger-scheduler.conf
       - ./docker/supervisor.d/supervisord.conf:/etc/supervisor/supervisord.conf
       - ./bin/console:/usr/bin/app-console
-    entrypoint: [ "/usr/local/bin/start-supervisord.sh" ]
+    #entrypoint: [ "/usr/local/bin/start-supervisord.sh" ]
+    restart: unless-stopped
+
 
 
 
