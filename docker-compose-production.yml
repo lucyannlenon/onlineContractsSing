@@ -30,4 +30,4 @@ services:
       - '9004:443'
     volumes:
       - ./app:/app
-      - ./apache/default.conf:/etc/apache2/sites-available/000-default.conf
+      - ./apache/docker/default.conf:/etc/apache2/sites-available/000-default.conf
