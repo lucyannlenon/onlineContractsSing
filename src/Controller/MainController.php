@@ -37,7 +37,7 @@ class MainController extends AbstractController
     public function checkCredentials(#[MapRequestPayload] AuthMainDto $authMainDTO, ContractsRepository $repository): Response
     {
         $item = $repository->findOneBy([
-            'cpf' => $authMainDTO->cpf,
+            'cpf' => $authMainDTO->getCpf(),
             'accessKey' => $authMainDTO->key,
             'birthday' => $authMainDTO->birthday
         ]);

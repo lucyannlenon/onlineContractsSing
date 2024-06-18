@@ -11,7 +11,7 @@
         <form action="{{ path('app_main_post') }}" method="post">
             <div class="mb-3">
                 <label for="username" class="form-label">CPF/CNPJ</label>
-                <input type="text" name="cpf" id="username" class="form-control"  required autofocus>
+                <input type="text" name="cpf" id="username" class="form-control" required autofocus>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Chave</label>
@@ -19,9 +19,32 @@
             </div>
             <div class="mb-3">
                 <label for="birthday" class="form-label">Data de nascimento</label>
-                <input type="text" name="birthday" id="birthday" class="form-control" required>
+                <input type="text" id="birthday" maxlength="10" placeholder="dd-mm-AAAA" class="form-control" required
+                       oninput="applyDateMask(this)">
+
             </div>
             <button type="submit" class="btn btn-primary w-100">Log in</button>
         </form>
     </div>
+    <script type="text/javascript">
+        function applyDateMask(input) {
+            // Remove qualquer caractere que não seja dígito ou hífen
+            let value = input.value.replace(/[^0-9\-]/g, '');
+
+            // Remove os hífens existentes
+            value = value.replace(/-/g, '');
+
+            // Aplica a máscara
+            if (value.length > 2 && value.length <= 4) {
+                value = value.slice(0, 2) + '-' + value.slice(2);
+            } else if (value.length > 4 && value.length <= 8) {
+                value = value.slice(0, 2) + '-' + value.slice(2, 4) + '-' + value.slice(4);
+            } else if (value.length > 8) {
+                value = value.slice(0, 2) + '-' + value.slice(2, 4) + '-' + value.slice(4, 8);
+            }
+
+            // Define o valor do campo de entrada
+            input.value = value;
+        }
+    </script>
 {% endblock %}
