@@ -87,11 +87,11 @@ RUN mkdir -p /var/log/supervisor
 COPY supervisor.d/supervisord.conf /etc/supervisor/supervisord.conf
 
 #CMD ["/usr/bin/supervisord"]
-#
-#COPY supervisor.d/start-supervisord.sh /usr/local/bin/start-supervisord.sh
-#
-#RUN chmod +x /usr/local/bin/start-supervisord.sh
+
+COPY supervisor.d/start-supervisord.sh /usr/local/bin/start.sh
+
+RUN chmod +x /usr/local/bin/start.sh
 #
 ##
 ### Command to run the startup script
-CMD ["/usr/bin/supervisord", "-c","/etc/supervisor/supervisord.conf"]
+CMD ["/usr/local/bin/start-supervisord.sh"]
