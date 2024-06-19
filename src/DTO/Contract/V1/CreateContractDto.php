@@ -10,7 +10,7 @@ class CreateContractDto
         #[Assert\NotBlank]
         public string    $cpf,
         #[Assert\NotBlank]
-        public \DateTime $birthday,
+        public \DateTimeInterface $birthday,
         #[Assert\NotBlank]
         public Payload   $payload
 
