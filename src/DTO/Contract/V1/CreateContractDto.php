@@ -11,6 +11,7 @@ class CreateContractDto
         public string    $cpf,
         #[Assert\NotBlank]
         public \DateTimeInterface $birthday,
+
         #[Assert\NotBlank]
         public Payload   $payload
 
