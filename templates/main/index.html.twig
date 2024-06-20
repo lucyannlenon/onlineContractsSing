@@ -6,7 +6,7 @@
     <div class="container" style="max-width: 400px">
         <h1 class="text-center">Assine seu Contrato</h1>
         {% if error %}
-            <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            <div class="alert alert-danger">{{ error}}</div>
         {% endif %}
         <form action="{{ path('app_main_post') }}" method="post">
             <div class="mb-3">
@@ -19,7 +19,7 @@
             </div>
             <div class="mb-3">
                 <label for="birthday" class="form-label">Data de nascimento</label>
-                <input type="text" id="birthday" maxlength="10" placeholder="dd-mm-AAAA" class="form-control" required
+                <input type="text" id="birthday" name="birthday" maxlength="10" placeholder="dd-mm-AAAA" class="form-control" required
                        oninput="applyDateMask(this)">
 
             </div>
