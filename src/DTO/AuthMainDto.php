@@ -7,12 +7,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 class AuthMainDto
 {
 
-    #[Assert\NotBlank]
     public \DateTime $birthday;
 
     public function __construct(
         #[Assert\NotBlank]
         public string $cpf,
+        #[Assert\NotBlank]
         string        $birthday,
         #[Assert\NotBlank]
         public string $key,

@@ -44,7 +44,7 @@ class MainController extends AbstractController
 
         if (!$item) {
             return $this->render('main/index.html.twig', [
-                'error' => "Fail invalid credentials"
+                'error' => "Nenhum contrato entrado para os dados fornecidos"
             ]);
         }
         return $this->redirect("/accept-term/{$item->getId()}");
