@@ -5,7 +5,7 @@ namespace App\Scheduler\Task;
 use App\Services\NotificationFinish;
 use Symfony\Component\Scheduler\Attribute\AsPeriodicTask;
 
-#[AsPeriodicTask(frequency: 800)]
+#[AsPeriodicTask(frequency: 80)]
 readonly class NotificationFinishContractTask
 {
     public function __construct(
