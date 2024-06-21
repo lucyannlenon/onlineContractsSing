@@ -40,6 +40,9 @@ class Contracts
     #[ORM\Column]
     private ?bool $finish = false;
 
+    #[ORM\Column]
+    private ?bool $notified = false;
+
     public function __construct()
     {
         $this->signatures = new ArrayCollection();
@@ -159,6 +162,18 @@ class Contracts
     public function setFinish(bool $finish): static
     {
         $this->finish = $finish;
+
+        return $this;
+    }
+
+    public function isNotified(): ?bool
+    {
+        return $this->notified;
+    }
+
+    public function setNotified(bool $notified): static
+    {
+        $this->notified = $notified;
 
         return $this;
     }
