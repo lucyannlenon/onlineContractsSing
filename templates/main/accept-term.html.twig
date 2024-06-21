@@ -33,13 +33,14 @@
         <p><strong>Desconto:</strong>{{ discount |format_currency('BRL') }}</p>
         <p><strong>Total:</strong> {{ total |format_currency('BRL') }}</p>
 
-        <h5>VALORES MENSAIS: {{ total_value  |format_currency('BRL') }}</h5>
+        <h5>VALORES MENSAIS: {{ sum  |format_currency('BRL') }}</h5>
         <div class="row">
-
+            {% set sum = 0 %}
             {% for product in products %}
                 <div class="col-2">{{ product.name }} :</div>
                 <div class="col-1"></div>
                 <div class="col-9"> {{ product.value |format_currency('BRL') }}</div>
+                {% set sum = sum + product.value %}
             {% endfor %}
         </div>
 
