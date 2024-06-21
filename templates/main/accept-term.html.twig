@@ -31,7 +31,9 @@
         <h4>III - VALORES A PAGAR PELO CLIENTE</h4>
         <p><strong>Valor Da Instalação:</strong> {{ installation_cost |format_currency('BRL') }}</p>
         <p><strong>Desconto:</strong>{{ discount_instalation |format_currency('BRL') }}</p>
-        <p><strong>Total:</strong> {{ installation_cost - discount_installation |format_currency('BRL') }}</p>
+        {% set total_installation = installation_cost|float - discount_installation|float %}
+
+        <p><strong>Total:</strong> {{ total_installation |format_currency('BRL') }}</p>
         {% set sum = products | reduce((carry, product) => carry + product.value, 0) %}
         <h5>VALORES MENSAIS: {{ sum  |format_currency('BRL') }}</h5>
         <div class="row">
