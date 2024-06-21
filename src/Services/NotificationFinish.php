@@ -45,14 +45,18 @@ class NotificationFinish
         $this->sendToServer($links, $contracts);
     }
 
-    private function sendToServer(array $links, Contracts $contracts):void
+    private function sendToServer(array $links, Contracts $contracts): void
     {
         $url = $_ENV['APPSUPORTE_WEBHOOK'];
-        $response = $this->httpClient->request('POST', $url, ['json' => [
-            'cpf' => $contracts->getCpf(),
-            'accessKey' => $contracts->getAccessKey(),
-            'links' => $links
-        ]]);
+        $response = $this->httpClient->request('POST', $url, [
+            'query' => [
+                'token' => $_ENV['API_TOKEN']
+            ],
+            'json' => [
+                'cpf' => $contracts->getCpf(),
+                'accessKey' => $contracts->getAccessKey(),
+                'links' => $links
+            ]]);
 
         try {
             $response->getContent();
