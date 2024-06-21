@@ -43,4 +43,11 @@ readonly class CreateContractService
 
         return $this->getCode($cpf);
     }
+
+    public function finishContract(Contracts $contracts):void
+    {
+        $contracts->setFinish(true);
+        $contracts->setNotified(false);
+        $this->repository->save($contracts);
+    }
 }

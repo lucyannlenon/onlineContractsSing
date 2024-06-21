@@ -57,6 +57,7 @@ class SignatureService
 
     /**
      * @return string
+     * @throws \Exception
      */
     public function getPrivateKey(): string
     {

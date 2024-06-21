@@ -6,6 +6,9 @@ use App\Entity\ContractSignature;
 use App\Repository\ContractSignatureRepository;
 use Knp\Snappy\Pdf;
 use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class GeneratePdfContract
 {
@@ -25,6 +28,11 @@ class GeneratePdfContract
 
     }
 
+    /**
+     * @throws RuntimeError
+     * @throws SyntaxError
+     * @throws LoaderError
+     */
     public function execute(): void
     {
         $items = $this->repository->findBy(['link' => null]);
@@ -37,9 +45,9 @@ class GeneratePdfContract
     /**
      * @param ContractSignature $item
      * @return void
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     private function processItem(ContractSignature $item): void
     {
@@ -67,9 +75,9 @@ class GeneratePdfContract
     /**
      * @param ContractSignature $item
      * @return void
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
+     * @throws LoaderError
+     * @throws RuntimeError
+     * @throws SyntaxError
      */
     private function generatePdf(ContractSignature $item): void
     {

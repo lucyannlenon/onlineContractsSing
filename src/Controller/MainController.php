@@ -6,6 +6,7 @@ use App\DTO\AuthMainDto;
 use App\Entity\Contracts;
 use App\Repository\ContractsRepository;
 use App\Services\ContractSignatureService;
+use App\Services\CreateContractService;
 use App\Services\LocalToken;
 use App\Services\SignatureService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -71,6 +72,13 @@ class MainController extends AbstractController
         return $response;
     }
 
+    /**
+     * @param Contracts $contract
+     * @param Request $request
+     * @param ContractSignatureService $signatureService
+     * @return Response
+     * @throws \Exception
+     */
     #[Route('/granting-benefits/{contract}')]
     public function grantingBenefits(Contracts $contract, Request $request, ContractSignatureService $signatureService): Response
     {
@@ -95,8 +103,9 @@ class MainController extends AbstractController
     }
 
     #[Route('/finish/{contract}')]
-    public function saveAll(Contracts $contract): Response
+    public function saveAll(Contracts $contract, CreateContractService $contractService): Response
     {
+        $contractService->finishContract($contract);
 
         return $this->render('main/success.html.twig', [
         ]);

@@ -10,8 +10,8 @@ services:
       - MYSQL_USER=${DATABASE_USER}
       - MYSQL_PASSWORD=${DATABASE_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${DATABASE_ROOT_PASSWORD}
-  #    ports:
-  #      - '3383:3306'
+    ports:
+      - '3383:3306'
   php:
     image: "php8.3-local:1.0"
     tty: true
@@ -30,4 +30,9 @@ services:
       - ./:/app
       - ./docker/apache/default.conf:/etc/apache2/sites-available/000-default.conf
       - ./bin/console:/usr/bin/app-console
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - '8686:8080'
 

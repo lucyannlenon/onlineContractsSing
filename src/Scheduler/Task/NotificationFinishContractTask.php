@@ -2,22 +2,20 @@
 
 namespace App\Scheduler\Task;
 
-
-use App\Services\GeneratePdfContract;
+use App\Services\NotificationFinish;
 use Symfony\Component\Scheduler\Attribute\AsPeriodicTask;
 
-#[AsPeriodicTask(frequency: 600)]
-readonly class GenerateContractTask
+#[AsPeriodicTask(frequency: 800)]
+readonly class NotificationFinishContractTask
 {
-
     public function __construct(
-        private GeneratePdfContract $pdfContract
+        private NotificationFinish $finish
     )
     {
     }
 
     public function __invoke(): void
     {
-        $this->pdfContract->execute();
+        $this->finish->execute();
     }
 }
