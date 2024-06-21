@@ -30,8 +30,8 @@
 
         <h4>III - VALORES A PAGAR PELO CLIENTE</h4>
         <p><strong>Valor Da Instalação:</strong> {{ installation_cost |format_currency('BRL') }}</p>
-        <p><strong>Desconto:</strong>{{ discount |format_currency('BRL') }}</p>
-        <p><strong>Total:</strong> {{ total |format_currency('BRL') }}</p>
+        <p><strong>Desconto:</strong>{{ discount_instalation |format_currency('BRL') }}</p>
+        <p><strong>Total:</strong> {{ installation_cost - discount_installation |format_currency('BRL') }}</p>
         {% set sum = products | reduce((carry, product) => carry + product.value, 0) %}
         <h5>VALORES MENSAIS: {{ sum  |format_currency('BRL') }}</h5>
         <div class="row">
@@ -46,8 +46,7 @@
 
         <p>O cliente está ciente e concorda com o contrato que se encontra disponível no site <a
                     href="http://www.izi.com.br/ctt/{{ contract_name }}">www.izi.com.br/ctt/{{ contract_name }}</a> e
-            registrado junto ao cartório de 1° Oficio da Comarca de Afonso Cláudio - ES, sob o N°4822, Livro b
-            -19; e por estar justo e contratado o cliente assina o presente instrumento, perante as testemunhas
+            por estar justo e contratado o cliente assina o presente instrumento, perante as testemunhas
             abaixo assinadas, para que produza seus efeitos legais e jurídicos.</p>
 
         {% if signature %}
