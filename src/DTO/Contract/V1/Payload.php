@@ -20,7 +20,7 @@ class Payload
         #[Assert\NotBlank]
         public string $rg_ie,
         #[Assert\GreaterThanOrEqual(value:0)]
-        public string $total,
+        public string $discount_installation,
         #[Assert\NotBlank]
         public string $phones,
         #[Assert\NotBlank]
@@ -41,8 +41,6 @@ class Payload
         public \DateTimeInterface $birth_date,
         #[Assert\NotBlank]
         public string $postal_code,
-        #[Assert\NotBlank]
-        public string $total_value,
         #[Assert\NotBlank]
         public string $neighborhood,
         #[Assert\NotBlank]
