@@ -18,6 +18,13 @@ class NotificationFinish
 
     }
 
+    /**
+     * @return void
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
     public function execute(): void
     {
         $items = $this->contractsRepository->findBy([
@@ -31,6 +38,14 @@ class NotificationFinish
 
     }
 
+    /**
+     * @param Contracts $contracts
+     * @return void
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
     private function notify(Contracts $contracts): void
     {
         $items = $contracts->getSignatures()->toArray();
@@ -45,6 +60,15 @@ class NotificationFinish
         $this->sendToServer($links, $contracts);
     }
 
+    /**
+     * @param array $links
+     * @param Contracts $contracts
+     * @return void
+     * @throws \Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface
+     * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
+     */
     private function sendToServer(array $links, Contracts $contracts): void
     {
         $url = $_ENV['APPSUPORTE_WEBHOOK'];
