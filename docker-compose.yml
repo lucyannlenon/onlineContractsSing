@@ -30,9 +30,9 @@ services:
       - ./:/app
       - ./docker/apache/default.conf:/etc/apache2/sites-available/000-default.conf
       - ./bin/console:/usr/bin/app-console
-  adminer:
-    image: adminer
-    restart: always
-    ports:
-      - '8686:8080'
+#  adminer:
+#    image: adminer
+#    restart: always
+#    ports:
+#      - '8686:8080'
 
