@@ -5,5 +5,5 @@ echo "Starting supervisord..."
 sleep 1
 
 echo "Starting apache..."
-#service apache2 start
+service apache2 start
 exit 0
