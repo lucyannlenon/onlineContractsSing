@@ -94,4 +94,4 @@ RUN chmod +x /usr/local/bin/start.sh
 #
 ##
 ### Command to run the startup script
-CMD ["/usr/local/bin/start-supervisord.sh"]
+CMD [" /usr/local/bin/start.sh"]
