@@ -2,20 +2,20 @@
 
 namespace App\Scheduler\Task;
 
-use App\Services\NotificationFinish;
+use App\Services\NotificationServer;
 use Symfony\Component\Scheduler\Attribute\AsPeriodicTask;
 
 #[AsPeriodicTask(frequency: 80)]
 readonly class NotificationFinishContractTask
 {
     public function __construct(
-        private NotificationFinish $finish
+        private NotificationServer $notificationServer
     )
     {
     }
 
     public function __invoke(): void
     {
-        $this->finish->execute();
+        $this->notificationServer->execute();
     }
 }
