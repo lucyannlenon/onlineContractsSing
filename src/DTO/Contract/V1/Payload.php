@@ -38,7 +38,7 @@ class Payload
         #[Assert\NotBlank]
         public string $guarantee,
         #[Assert\NotBlank]
-        public \DateTimeInterface $birth_date,
+        public string $birth_date,
         #[Assert\NotBlank]
         public string $postal_code,
         #[Assert\NotBlank]
