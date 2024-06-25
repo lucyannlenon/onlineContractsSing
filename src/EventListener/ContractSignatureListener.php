@@ -9,7 +9,8 @@ use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\Events;
 use Psr\Log\LoggerInterface;
 
-#[AsEntityListener(event: Events::prePersist, method: 'onCreateSignature', entity: ContractSignature::class)]
+#[AsEntityListener(event: Events::postPersist, method: 'onCreateSignature', entity: ContractSignature::class)]
+#[AsEntityListener(event: Events::postUpdate, method: 'onCreateSignature', entity: ContractSignature::class)]
 class ContractSignatureListener
 {
 
