@@ -25,6 +25,8 @@ class ContractSignatureListener
     {
         try {
 
+            $this->logger->info("send to server message {$contractSignature->getName()}");
+
             $post = [
                 'cpf' => $contractSignature->getContract()->getCpf(),
                 'accessKey' => $contractSignature->getContract()->getAccessKey(),
@@ -32,6 +34,7 @@ class ContractSignatureListener
                 'message' => $contractSignature->getName()
             ];
             $this->notificationServer->sendToServer($post);
+
 
         } catch (\Exception|\Throwable $e) {
 
