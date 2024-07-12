@@ -69,6 +69,7 @@ class NotificationServer
             $contracts->setNotified(true);
             $this->contractsRepository->save($contracts);
         } catch (\Exception $exception) {
+            dd($exception);
             $this->logger->critical($exception->getMessage(), [
                 'cause' => $exception
             ]);
