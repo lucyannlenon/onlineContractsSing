@@ -60,7 +60,6 @@ class GeneratePdfContract
         $id = md5($fileName . $item->getSignature() ?? uniqid());
         $this->gateway->uploadPath($fileName, $id);
         $link = $this->gateway->getUrlView($id);
-        dd($link);
         $item->setLink($link);
     }
 
