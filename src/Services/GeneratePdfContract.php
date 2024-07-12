@@ -98,6 +98,7 @@ class GeneratePdfContract
         );
 
 
+        dd($fileName);
         $this->uploadToServer($fileName, $item);
         unlink($fileName);
     }
