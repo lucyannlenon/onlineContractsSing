@@ -70,7 +70,7 @@ class NotificationServer
             $this->contractsRepository->save($contracts);
             dd($contracts);
         } catch (\Exception $exception) {
-            dd($exception);
+            dd($exception, json_encode($post));
             $this->logger->critical($exception->getMessage(), [
                 'cause' => $exception
             ]);
