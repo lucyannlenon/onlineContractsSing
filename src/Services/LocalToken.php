@@ -6,7 +6,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 
 class LocalToken
 {
-    const string DIR = "/tmp";
+    const  DIR = "/tmp";
 
     public function __construct(
         private readonly SerializerInterface $serializer

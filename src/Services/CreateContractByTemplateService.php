@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
-use App\DTO\Contract\V1\CreateContractDto;
+use App\DTO\Contract\V2\CreateContractDto;
 use App\Entity\Contracts;
 use App\Enum\ContractTypeEnum;
 use App\Repository\ContractsRepository;
 
-readonly class CreateContractService
+readonly class CreateContractByTemplateService
 {
     public function __construct(
         private ContractsRepository $repository
@@ -23,8 +23,9 @@ readonly class CreateContractService
         $contracts->setCpf($contractDto->cpf);
         $contracts->setBirthday($contractDto->birthday);
         $contracts->setAccessKey($code);
-        $contracts->setContractType(ContractTypeEnum::DEFAULT);
-        $contracts->setPayload((array)$contractDto->payload);
+        $contracts->setPayload([]);
+        $contracts->setContractType(ContractTypeEnum::TEMPLATE);
+        $contracts->setTemplate($contractDto->contractTemplate);
         $this->repository->save($contracts);
         return $contracts;
     }
@@ -46,7 +47,7 @@ readonly class CreateContractService
         return $this->getCode($cpf);
     }
 
-    public function finishContract(Contracts $contracts):void
+    public function finishContract(Contracts $contracts): void
     {
         $contracts->setFinish(true);
         $contracts->setNotified(false);

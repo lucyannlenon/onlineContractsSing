@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+
+    <div class="container mt-5">
+        {{ contract.template | raw }}
+
+    </div>
+    {% if  enable_btn is defined %}
+        <div class="text-center">
+            <a class="btn btn-success btn-lg " href="{{ path(app.request.attributes.get('_route'),
+                app.request.attributes.get('_route_params') |merge({'accept-key': '1'})) }}">Aceitar termos do contrato e
+                continuar</a>
+        </div>
+    {% endif %}
+
+{% endblock %}

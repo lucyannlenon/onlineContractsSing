@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\ContractTypeEnum;
 use App\Repository\ContractsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -21,6 +22,13 @@ class Contracts
 
     #[ORM\Column(length: 10)]
     private ?string $accessKey = null;
+
+    #[ORM\Column(length: 50, nullable: true)]
+    private ContractTypeEnum|null $contractType = null;
+
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $template = null;
+
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $birthday = null;
@@ -42,6 +50,26 @@ class Contracts
 
     #[ORM\Column]
     private ?bool $notified = false;
+
+    public function getContractType(): ?ContractTypeEnum
+    {
+        return $this->contractType;
+    }
+
+    public function setContractType(?ContractTypeEnum $contractType): void
+    {
+        $this->contractType = $contractType;
+    }
+
+    public function getTemplate(): ?string
+    {
+        return $this->template;
+    }
+
+    public function setTemplate(?string $template): void
+    {
+        $this->template = $template;
+    }
 
     public function __construct()
     {

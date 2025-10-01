@@ -1,7 +1,5 @@
-version: '3.8'
-#libfontenc1 xfonts-75dpi xfonts-base xfonts-encodings xfonts-utils
 services:
-  mysql:
+  db:
     image: mysql
     volumes:
       - ./db_data:/var/lib/mysql
@@ -10,26 +8,38 @@ services:
       - MYSQL_USER=${DATABASE_USER}
       - MYSQL_PASSWORD=${DATABASE_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${DATABASE_ROOT_PASSWORD}
-    ports:
-      - '3383:3306'
+    env_file:
+      - .env
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "${DATABASE_USER}", "-p${DATABASE_PASSWORD}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   php:
-    image: "php8.3-local:1.0"
+    build: ./docker
     tty: true
     extra_hosts:
       - "host.docker.internal:host-gateway"
     working_dir: /app
     depends_on:
-      - mysql
-    links:
-      - mysql:mysql
+      db:
+        condition: service_healthy
+
     ports:
       #- '8086:80'
-      - '9003:80'
+      - '9004:80'
     #  - '9004:443'
     volumes:
       - ./:/app
       - ./docker/apache/default.conf:/etc/apache2/sites-available/000-default.conf
       - ./bin/console:/usr/bin/app-console
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
 #  adminer:
 #    image: adminer
 #    restart: always
