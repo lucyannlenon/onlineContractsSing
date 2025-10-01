@@ -11,6 +11,8 @@ services:
       - MYSQL_USER=${DATABASE_USER}
       - MYSQL_PASSWORD=${DATABASE_PASSWORD}
       - MYSQL_ROOT_PASSWORD=${DATABASE_ROOT_PASSWORD}
+    networks:
+      - app-network
 #    ports:
 #      - '3383:3306'
   php:
@@ -32,6 +34,11 @@ services:
       - ./bin/console:/usr/bin/app-console
 #    entrypoint: [ "/usr/local/bin/start-supervisord.sh" ]
     restart: unless-stopped
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
 
 
 
