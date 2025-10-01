@@ -10,6 +10,7 @@ use App\Services\ContractSignatureService;
 use App\Services\CreateContractService;
 use App\Services\LocalToken;
 use App\Services\SignatureService;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -105,7 +106,7 @@ class MainController extends AbstractController
      * @param Request $request
      * @param ContractSignatureService $signatureService
      * @return Response
-     * @throws \Exception
+     * @throws Exception
      */
     #[Route('/granting-benefits/{contract}')]
     public function grantingBenefits(Contracts $contract, Request $request, ContractSignatureService $signatureService): Response
