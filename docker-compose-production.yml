@@ -24,7 +24,7 @@ services:
     depends_on:
       - mysql
     ports:
-      - '9003:80'
+      - '127.0.0.1:9003:80'
      # - '9004:443'
     volumes:
       - ./:/app
