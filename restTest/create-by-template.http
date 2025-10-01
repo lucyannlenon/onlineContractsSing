@@ -1,0 +1,11 @@
+### GET request to example server
+POST http://localhost:9004/api/contract/add-template?token=a1ce01a431dbc15dd1d36a461d4413c0335e0513e225217b5b43d8bd2ea838d6
+Accept: application/json
+Content-Type: application/json
+
+{
+  "cpf": "12345678901",
+  "birthday": "1990-01-15",
+  "contractTemplate": "<html><head><title>Contract</title></head><body><h1>Standard Contract</h1><p>This is a sample contract template.</p></body></html>"
+}
+###

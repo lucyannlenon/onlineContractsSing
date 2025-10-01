@@ -1,0 +1,56 @@
+<?php
+
+namespace App\Services;
+
+use App\DTO\Contract\V2\CreateContractDto;
+use App\Entity\Contracts;
+use App\Enum\ContractTypeEnum;
+use App\Repository\ContractsRepository;
+
+readonly class CreateContractByTemplateService
+{
+    public function __construct(
+        private ContractsRepository $repository
+    )
+    {
+
+    }
+
+    public function create(CreateContractDto $contractDto): Contracts
+    {
+        $code = $this->getCode($contractDto->cpf);
+        $contracts = new Contracts();
+        $contracts->setCpf($contractDto->cpf);
+        $contracts->setBirthday($contractDto->birthday);
+        $contracts->setAccessKey($code);
+        $contracts->setPayload([]);
+        $contracts->setContractType(ContractTypeEnum::TEMPLATE);
+        $contracts->setTemplate($contractDto->contractTemplate);
+        $this->repository->save($contracts);
+        return $contracts;
+    }
+
+    private function getCode(string $cpf): string
+    {
+
+        $code = rand(10000, 99999);
+
+        $item = $this->repository->findOneBy([
+            'cpf' => $cpf,
+            'accessKey' => $code
+        ]);
+
+        if (!$item) {
+            return $code;
+        }
+
+        return $this->getCode($cpf);
+    }
+
+    public function finishContract(Contracts $contracts): void
+    {
+        $contracts->setFinish(true);
+        $contracts->setNotified(false);
+        $this->repository->save($contracts);
+    }
+}

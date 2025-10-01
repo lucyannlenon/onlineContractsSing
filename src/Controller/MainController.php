@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\DTO\AuthMainDto;
 use App\Entity\Contracts;
+use App\Enum\ContractTypeEnum;
 use App\Repository\ContractsRepository;
 use App\Services\ContractSignatureService;
 use App\Services\CreateContractService;
@@ -48,7 +49,34 @@ class MainController extends AbstractController
                 'error' => "Nenhum contrato entrado para os dados fornecidos"
             ]);
         }
-        return $this->redirect("/accept-term/{$item->getId()}");
+        return $this->redirect("/accept-contract/{$item->getId()}");
+    }
+
+    #[Route('/accept-contract/{contract}', name: 'app_accept_contract')]
+    public function acceptContractTemplate(Contracts $contract, Request $request, ContractSignatureService $signatureService): Response
+    {
+        if ($contract->getContractType() == ContractTypeEnum::DEFAULT || $contract->getContractType() == null) {
+            return $this->redirect('/accept-term/' . $contract->getId());
+        }
+
+        $acceptKey = $request->get('accept-key', false);
+        $payload = [
+            'contract' => $contract,
+            'enable_btn' => !$acceptKey
+        ];
+        $response = $this->render('main/accept-contract.html.twig', $payload);
+
+        if ($acceptKey) {
+            $clientInfo = [
+                'ip_address' => $request->getClientIps(),
+                'user_agent' => $request->getUserInfo(),
+                'timestamp' => time()
+            ];
+
+            $signatureService->singAcceptTerm($clientInfo, $response->getContent(), $contract);
+            return $this->redirect('/finish/' . $contract->getId());
+        }
+        return $response;
     }
 
     #[Route('/accept-term/{contract}')]

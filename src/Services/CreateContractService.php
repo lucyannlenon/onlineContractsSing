@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\DTO\Contract\V1\CreateContractDto;
 use App\Entity\Contracts;
+use App\Enum\ContractTypeEnum;
 use App\Repository\ContractsRepository;
 
 readonly class CreateContractService
@@ -22,6 +23,7 @@ readonly class CreateContractService
         $contracts->setCpf($contractDto->cpf);
         $contracts->setBirthday($contractDto->birthday);
         $contracts->setAccessKey($code);
+        $contracts->setContractType(ContractTypeEnum::DEFAULT);
         $contracts->setPayload((array)$contractDto->payload);
         $this->repository->save($contracts);
         return $contracts;
