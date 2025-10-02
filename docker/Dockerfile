@@ -1,5 +1,5 @@
 # Base image PHP 8.3 (Debian 12 bookworm)
-FROM php:8.3-apache
+FROM php:8.3-apache-bullseye
 
 # Instala pacotes necessários, PHP extensions, composer e symfony-cli
 RUN apt-get update && apt-get install -y \
@@ -56,15 +56,8 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libzip-dev \
     libsqlite3-dev \
-    libmemcached-dev \
-    librabbitmq \
-    libjpeg62-turbo \
-    libssl1.1 \
-    xfonts-75dpi \
-    xfonts-base \
-    && dpkg -i /tmp/wkhtmltox_0.12.6.1-2.bullseye_amd64.deb || true \
-    && apt-get install -f -y \
-    && rm -rf /var/lib/apt/lists/*
+    libjpeg62-turbo\
+    wkhtmltopdf
 #RUN cp /tmp/wkhtmltox/bin/wkhtmltopdf /usr/local/bin/ \
 #    && chmod +x /usr/local/bin/wkhtmltopdf \
 #    && rm -rf /tmp/wkhtmltox*
