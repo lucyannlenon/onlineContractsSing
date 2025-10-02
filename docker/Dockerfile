@@ -57,7 +57,9 @@ RUN apt-get update && apt-get install -y \
     libzip-dev \
     libsqlite3-dev \
     libjpeg62-turbo\
-    wkhtmltopdf
+    wkhtmltopdf\
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/*
 #RUN cp /tmp/wkhtmltox/bin/wkhtmltopdf /usr/local/bin/ \
 #    && chmod +x /usr/local/bin/wkhtmltopdf \
 #    && rm -rf /tmp/wkhtmltox*
