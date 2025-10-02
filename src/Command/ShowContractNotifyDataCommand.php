@@ -11,12 +11,14 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 
 #[AsCommand(name: 'app:show_contract:notifyData', description: 'show contracts by accept key')]
 class ShowContractNotifyDataCommand extends Command
 {
     public function __construct(
         private readonly ContractsRepository $contractsRepository,
+        private readonly SerializerInterface $serializer,
 
         ?string                              $name = null)
     {
@@ -54,7 +56,8 @@ class ShowContractNotifyDataCommand extends Command
                 'action' => NotificationServerEnum::FINISH->name,
                 'contractType' => $contracts->getContractType()
             ];
-            dump($post);
+
+            $output->writeln($this->serializer->serialize($post, 'json'));
         }
 
         return Command::SUCCESS;
