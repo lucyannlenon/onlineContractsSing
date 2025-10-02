@@ -104,4 +104,16 @@ class ContractSignature
 
         return $this;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->id,
+            'contract' => $this->contract?->getId(),
+            'signature' => $this->signature,
+            'link' => $this->link,
+            'createdAt' => $this->createdAt?->format('Y-m-d H:i:s'),
+            'name' => $this->name
+        ];
+    }
 }

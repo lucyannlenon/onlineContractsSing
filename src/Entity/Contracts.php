@@ -205,4 +205,21 @@ class Contracts
 
         return $this;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'cpf' => $this->getCpf(),
+            'accessKey' => $this->getAccessKey(),
+            'contractType' => $this->getContractType()?->name,
+            'template' => $this->getTemplate(),
+            'birthday' => $this->getBirthday()?->format('Y-m-d'),
+            'payload' => $this->getPayload(),
+            'signatures' => $this->getSignatures()->map(fn($signature) => $signature->toArray())->toArray(),
+            'createdAt' => $this->getCreatedAt()?->format('Y-m-d H:i:s'),
+            'finish' => $this->isFinish(),
+            'notified' => $this->isNotified()
+        ];
+    }
 }
