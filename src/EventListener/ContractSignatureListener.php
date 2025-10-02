@@ -32,7 +32,8 @@ class ContractSignatureListener
                 'cpf' => $contractSignature->getContract()->getCpf(),
                 'accessKey' => $contractSignature->getContract()->getAccessKey(),
                 'action' => NotificationServerEnum::UPDATE_SIGNATURE->name,
-                'message' => $contractSignature->getName()
+                'message' => $contractSignature->getName(),
+                'contractType' => $contractSignature->getContract()->getContractType() ?? ''
             ];
             $this->notificationServer->sendToServer($post);
 
