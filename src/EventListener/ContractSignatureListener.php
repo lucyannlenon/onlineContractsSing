@@ -4,6 +4,7 @@ namespace App\EventListener;
 
 use App\Entity\ContractSignature;
 use App\Enum\NotificationServerEnum;
+use App\Services\NotificationContractServer;
 use App\Services\NotificationServer;
 use Doctrine\Bundle\DoctrineBundle\Attribute\AsEntityListener;
 use Doctrine\ORM\Events;
@@ -17,7 +18,7 @@ class ContractSignatureListener
 
     public function __construct(
         private readonly LoggerInterface    $logger,
-        private readonly NotificationServer $notificationServer
+        private readonly NotificationContractServer $notificationServer
     )
     {
     }
