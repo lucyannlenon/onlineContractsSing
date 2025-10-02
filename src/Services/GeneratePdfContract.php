@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Entity\ContractSignature;
+use App\Enum\ContractTypeEnum;
 use App\Repository\ContractSignatureRepository;
 use Knp\Snappy\Pdf;
 use Twig\Environment;
@@ -83,11 +84,20 @@ class GeneratePdfContract
     {
 
         $fileName = $this->getDir() . "/{$item->getId()}.pdf";
-        $payload = $item->getContract()->getPayload();
-        $payload['signature'] = $item->getSignature();
-        $payload['signature_date'] = $item->getCreatedAt()?->format('d/m/Y H:i:s');
-        $html = $this->environment->render($this->templates[$item->md5Name()], $payload);
-
+        if ($item->getContract()->getContractType() === ContractTypeEnum::TEMPLATE) {
+            $payload = [
+                'contract' => $item->getContract(),
+                'enable_btn' => false,
+                'signature' => $item->getSignature(),
+                'signature_date' => $item->getCreatedAt()?->format('d/m/Y H:i:s')
+            ];
+            $html = $this->environment->render('main/accept-contract.html.twig', $payload);
+        } else {
+            $payload = $item->getContract()->getPayload();
+            $payload['signature'] = $item->getSignature();
+            $payload['signature_date'] = $item->getCreatedAt()?->format('d/m/Y H:i:s');
+            $html = $this->environment->render($this->templates[$item->md5Name()], $payload);
+        }
         $this->pdf->generateFromHtml(
             $html,
             $fileName,
