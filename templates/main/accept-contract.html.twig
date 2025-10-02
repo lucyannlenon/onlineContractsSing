@@ -8,6 +8,11 @@
         {{ contract.template | raw }}
 
     </div>
+    {% if signature %}
+        <p>ASSINATURA DIGITAL DO CLIENTE!</p>
+        <pre style="max-width: 800px; border: 1px black dashed;overflow-wrap: break-word; padding: 10px">{{ signature }}</pre>
+        <p><strong>Data de assinatura do contrato:</strong> {{ signature_date }}</p>
+    {% endif %}
     {% if  enable_btn is defined %}
         <div class="text-center">
             <a class="btn btn-success btn-lg " href="{{ path(app.request.attributes.get('_route'),
