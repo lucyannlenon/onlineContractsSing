@@ -61,7 +61,8 @@ class NotificationServer
             'cpf' => $contracts->getCpf(),
             'accessKey' => $contracts->getAccessKey(),
             'links' => $links,
-            'action' => NotificationServerEnum::FINISH->name
+            'action' => NotificationServerEnum::FINISH->name,
+            'contractType' => $contracts->getContractType()
         ];
 
         try {
