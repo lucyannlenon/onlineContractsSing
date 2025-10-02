@@ -86,7 +86,7 @@ class GeneratePdfContract
         $fileName = $this->getDir() . "/{$item->getId()}.pdf";
         if ($item->getContract()->getContractType() === ContractTypeEnum::TEMPLATE) {
             $payload = [
-                'contract' => $item->getContract(),
+                'contract' => $item->getContract()->toArray(),
                 'enable_btn' => false,
                 'signature' => $item->getSignature(),
                 'signature_date' => $item->getCreatedAt()?->format('d/m/Y H:i:s')
