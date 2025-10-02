@@ -11,6 +11,7 @@ use App\Services\CreateContractService;
 use App\Services\LocalToken;
 use App\Services\SignatureService;
 use Exception;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +21,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class MainController extends AbstractController
 {
     public function __construct(
-        public LocalToken $localToken
+        public LocalToken $localToken, 
+        public LoggerInterface $logger,
     )
     {
 
@@ -39,6 +41,11 @@ class MainController extends AbstractController
     #[Route('/', name: 'app_main_post', methods: ['POST'])]
     public function checkCredentials(#[MapRequestPayload] AuthMainDto $authMainDTO, ContractsRepository $repository): Response
     {
+        $this->logger->info('Checking credentials', [
+            'cpf' => $authMainDTO->getCpf(),
+            'birthday' => $authMainDTO->birthday
+        ]);
+
         $item = $repository->findOneBy([
             'cpf' => $authMainDTO->getCpf(),
             'accessKey' => $authMainDTO->key,
@@ -56,6 +63,11 @@ class MainController extends AbstractController
     #[Route('/accept-contract/{contract}', name: 'app_accept_contract')]
     public function acceptContractTemplate(Contracts $contract, Request $request, ContractSignatureService $signatureService): Response
     {
+        $this->logger->info('Processing contract template acceptance', [
+            'contract_id' => $contract->getId(),
+            'contract_type' => $contract->getContractType()?->name
+        ]);
+
         if ($contract->getContractType() == ContractTypeEnum::DEFAULT || $contract->getContractType() == null) {
             return $this->redirect('/accept-term/' . $contract->getId());
         }
@@ -74,7 +86,7 @@ class MainController extends AbstractController
                 'timestamp' => time()
             ];
 
-            $signatureService->singAcceptTerm($clientInfo, $response->getContent(), $contract);
+            $signatureService->singContractTerm($clientInfo, $response->getContent(), $contract);
             return $this->redirect('/finish/' . $contract->getId());
         }
         return $response;
@@ -83,6 +95,10 @@ class MainController extends AbstractController
     #[Route('/accept-term/{contract}')]
     public function acceptTerm(Contracts $contract, Request $request, ContractSignatureService $signatureService): Response
     {
+        $this->logger->info('Processing term acceptance', [
+            'contract_id' => $contract->getId()
+        ]);
+
         $acceptKey = $request->get('accept-key', false);
         $payload = $contract->getPayload();
         $payload['enable_btn'] = !$acceptKey;
@@ -111,6 +127,9 @@ class MainController extends AbstractController
     #[Route('/granting-benefits/{contract}')]
     public function grantingBenefits(Contracts $contract, Request $request, ContractSignatureService $signatureService): Response
     {
+        $this->logger->info('Processing benefits granting', [
+            'contract_id' => $contract->getId()
+        ]);
 
 
         $payload = $contract->getPayload();
@@ -134,6 +153,10 @@ class MainController extends AbstractController
     #[Route('/finish/{contract}')]
     public function saveAll(Contracts $contract, CreateContractService $contractService): Response
     {
+        $this->logger->info('Finalizing contract', [
+            'contract_id' => $contract->getId()
+        ]);
+
         $contractService->finishContract($contract);
 
         return $this->render('main/success.html.twig', [
