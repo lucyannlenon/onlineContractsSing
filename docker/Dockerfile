@@ -70,11 +70,11 @@ RUN apt-get update && apt-get install -y \
 #    && rm -rf /tmp/wkhtmltox*
 
 ## Configuração do supervisor
-#RUN mkdir -p /var/log/supervisor
-#
-#COPY supervisor.d/supervisord.conf /etc/supervisor/supervisord.conf
-#COPY supervisor.d/start-supervisord.sh /usr/local/bin/start.sh
-#RUN chmod +x /usr/local/bin/start.sh
-#
-## Script de entrada
-#CMD ["/usr/local/bin/start.sh"]
+RUN mkdir -p /var/log/supervisor
+
+COPY supervisor.d/supervisord.conf /etc/supervisor/supervisord.conf
+COPY supervisor.d/start-supervisord.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
+
+# Script de entrada
+CMD ["/usr/local/bin/start.sh"]
