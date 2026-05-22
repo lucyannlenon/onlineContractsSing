@@ -78,6 +78,9 @@ class NotificationContractServer
             'query' => [
                 'token' => $_ENV['API_TOKEN']
             ],
+            'headers' => [
+                'X-AUTH-TOKEN' => $_ENV['API_TOKEN']
+            ],
             'json' => $post
         ]);
 
