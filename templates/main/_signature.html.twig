@@ -16,21 +16,28 @@
             </span>
         </div>
 
-        <div class="signature-meta">
-            <span class="signature-meta__label">Assinado em</span>
-            <span class="signature-meta__value">{{ signature_date }}</span>
+        <div class="signature-stamp">
+            <div class="signature-meta">
+                <span class="signature-meta__label">Assinado em</span>
+                <span class="signature-meta__value">{{ signature_date }}</span>
+            </div>
+            <div class="signature-meta">
+                <span class="signature-meta__label">Verificador</span>
+                <code class="signature-token">{{ signature|slice(0, 24) }}</code>
+            </div>
         </div>
 
-        <div class="signature-meta">
+        <p class="signature-note">A integridade deste documento foi registrada por assinatura eletrônica vinculada ao conteúdo apresentado no momento do aceite.</p>
+
+        <details class="signature-technical">
+            <summary>Dados técnicos da assinatura</summary>
             <span class="signature-meta__label">Assinatura criptográfica</span>
             <code class="signature-hash">{{ signature }}</code>
-        </div>
 
-        {% if signature_evidence_base64 is defined and signature_evidence_base64 %}
-            <details class="signature-evidence">
-                <summary>Dados técnicos da assinatura (base64)</summary>
+            {% if signature_evidence_base64 is defined and signature_evidence_base64 %}
+                <span class="signature-meta__label">Evidência em base64</span>
                 <code>{{ signature_evidence_base64 }}</code>
-            </details>
-        {% endif %}
+            {% endif %}
+        </details>
     </section>
 {% endif %}

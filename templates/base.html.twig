@@ -303,17 +303,20 @@
 
             .signature-panel {
                 display: grid;
-                gap: 18px;
+                gap: 14px;
                 margin-top: 34px;
-                padding: 22px;
-                border: 1px solid rgba(249, 115, 22, .20);
-                border-radius: 14px;
-                background: linear-gradient(180deg, rgba(251, 191, 36, .08), rgba(255, 255, 255, .98));
+                padding: 18px 20px;
+                border: 1px solid rgba(249, 115, 22, .26);
+                border-left: 5px solid var(--izi-orange);
+                border-radius: 8px;
+                background: #FFFFFF;
+                break-inside: avoid;
+                page-break-inside: avoid;
             }
 
             .signature-panel__header {
                 display: flex;
-                align-items: flex-start;
+                align-items: center;
                 justify-content: space-between;
                 gap: 16px;
             }
@@ -326,20 +329,20 @@
             }
 
             .signature-panel__icon {
-                width: 44px;
-                height: 44px;
+                width: 34px;
+                height: 34px;
                 display: inline-grid;
-                flex: 0 0 44px;
+                flex: 0 0 34px;
                 place-items: center;
-                border-radius: 14px;
-                background: #FFFFFF;
+                border: 1px solid rgba(249, 115, 22, .26);
+                border-radius: 999px;
+                background: rgba(251, 191, 36, .12);
                 color: var(--izi-orange-dark);
-                box-shadow: 0 8px 18px rgba(17, 24, 39, .08);
             }
 
             .signature-panel h2 {
                 margin: 0;
-                font-size: 1.06rem;
+                font-size: 1rem;
             }
 
             .signature-panel p {
@@ -362,38 +365,60 @@
                 white-space: nowrap;
             }
 
+            .signature-stamp {
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+                gap: 14px;
+                padding: 12px 14px;
+                border: 1px solid var(--izi-border);
+                border-radius: 6px;
+                background: #FAFAFA;
+            }
+
+            .signature-token {
+                color: var(--izi-ink);
+                font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+                font-size: .86rem;
+                font-weight: 800;
+                overflow-wrap: anywhere;
+            }
+
+            .signature-note {
+                max-width: 780px;
+            }
+
             .signature-hash {
                 display: block;
-                margin: 0;
-                padding: 16px;
-                border: 1px solid rgba(251, 191, 36, .40);
-                border-radius: 12px;
-                background: rgba(251, 191, 36, .14);
-                color: #78350F;
+                margin: 7px 0 12px;
+                padding: 12px;
+                border: 1px solid var(--izi-border);
+                border-radius: 6px;
+                background: #FFFFFF;
+                color: #374151;
                 font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
-                font-size: .88rem;
-                line-height: 1.65;
+                font-size: .78rem;
+                line-height: 1.5;
                 overflow-wrap: anywhere;
                 white-space: pre-wrap;
             }
 
-            .signature-evidence {
+            .signature-technical {
                 padding-top: 2px;
             }
 
-            .signature-evidence summary {
+            .signature-technical summary {
                 color: var(--izi-orange-dark);
                 cursor: pointer;
                 font-size: .9rem;
                 font-weight: 800;
             }
 
-            .signature-evidence code {
+            .signature-technical code {
                 display: block;
-                margin-top: 10px;
-                padding: 14px;
+                margin: 7px 0 12px;
+                padding: 12px;
                 border: 1px solid var(--izi-border);
-                border-radius: 12px;
+                border-radius: 6px;
                 background: #FFFFFF;
                 color: #374151;
                 font-size: .78rem;
@@ -647,6 +672,10 @@
                     width: fit-content;
                 }
 
+                .signature-stamp {
+                    grid-template-columns: 1fr;
+                }
+
                 .accept-actions {
                     position: fixed;
                     right: 0;
@@ -670,6 +699,97 @@
 
                 .brand-footer__links {
                     justify-content: flex-start;
+                }
+            }
+
+            @media print {
+                .signature-panel {
+                    display: block;
+                    margin-top: 22px;
+                    padding: 12px 14px;
+                    border: 1px solid #D6D3D1;
+                    border-left: 4px solid #EA580C;
+                    border-radius: 0;
+                    background: #FFFFFF;
+                    box-shadow: none;
+                    break-inside: avoid;
+                    page-break-inside: avoid;
+                }
+
+                .signature-panel__header {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    margin-bottom: 10px;
+                }
+
+                .signature-panel__title {
+                    gap: 8px;
+                }
+
+                .signature-panel__icon {
+                    width: 24px;
+                    height: 24px;
+                    flex-basis: 24px;
+                    color: #EA580C;
+                    background: #FFFFFF;
+                    border-color: #D6D3D1;
+                }
+
+                .signature-panel h2 {
+                    font-size: 12pt;
+                    line-height: 1.2;
+                }
+
+                .signature-panel p {
+                    font-size: 8.5pt;
+                    line-height: 1.35;
+                }
+
+                .signature-badge {
+                    margin-left: auto;
+                    padding: 4px 8px;
+                    border: 1px solid #BBF7D0;
+                    background: #F0FDF4;
+                    color: #166534;
+                    font-size: 8pt;
+                }
+
+                .signature-stamp {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 8px;
+                    margin: 8px 0;
+                    padding: 8px 10px;
+                    border: 1px solid #D6D3D1;
+                    border-radius: 0;
+                    background: #FFFFFF;
+                }
+
+                .signature-meta {
+                    gap: 2px;
+                }
+
+                .signature-meta__label {
+                    color: #57534E;
+                    font-size: 7.5pt;
+                    letter-spacing: .05em;
+                }
+
+                .signature-meta__value,
+                .signature-token {
+                    color: #1F2937;
+                    font-size: 9pt;
+                    line-height: 1.25;
+                }
+
+                .signature-note {
+                    margin-top: 6px;
+                    color: #57534E;
+                }
+
+                .signature-technical {
+                    display: none;
                 }
             }
         </style>
