@@ -10,11 +10,17 @@ use Appwrite\Services\Storage;
 class FileGateway
 {
 
-    private Storage $fileStorage;
-    private string $bucketId;
+    private ?Storage $fileStorage = null;
+    private ?string $bucketId = null;
+    private ?string $localStorageDir;
 
     public function __construct()
     {
+        $this->localStorageDir = $_ENV['APPWRITE_LOCAL_STORAGE_DIR'] ?? null;
+        if ($this->localStorageDir) {
+            return;
+        }
+
         $client = new Client();
         $client->setEndpoint($_ENV['APPWRITE_URL']);
         $client->setProject($_ENV['APPWRITE_PROJECT_ID'])
@@ -28,6 +34,13 @@ class FileGateway
 
     public function uploadPath(string $path, $fileId = null): string
     {
+        if ($this->localStorageDir) {
+            $fileId ??= uniqid('d' . time());
+            $target = $this->localPath($fileId);
+            copy($path, $target);
+            return $this->getDsn($fileId);
+        }
+
         $inputFile = InputFile::withPath($path);
 
 
@@ -36,6 +49,12 @@ class FileGateway
 
     public function uploadData(string $data, $fileId = null): string
     {
+        if ($this->localStorageDir) {
+            $fileId ??= uniqid('d' . time());
+            file_put_contents($this->localPath($fileId), $data);
+            return $this->getDsn($fileId);
+        }
+
         $inputFile = InputFile::withData($data);
         return $this->upload($inputFile, $fileId);
     }
@@ -52,6 +71,10 @@ class FileGateway
 
     private function getDsn(string $fileId): string
     {
+        if ($this->localStorageDir) {
+            return 'local://' . $this->localPath($fileId);
+        }
+
         $service = "appwrite";
         $url = $_ENV['APPWRITE_URL'];
         $projectId = $_ENV['APPWRITE_PROJECT_ID'];
@@ -69,8 +92,21 @@ class FileGateway
 
     public function getUrlView(string $id)
     {
+        if ($this->localStorageDir) {
+            return 'local://' . $this->localPath($id);
+        }
+
         $url = $_ENV['APPWRITE_URL'];
         $projectId = $_ENV['APPWRITE_PROJECT_ID'];
         return sprintf("https://%s/v1/storage/buckets/%s/files/%s/download?project=%s", $url, $this->bucketId, $id, $projectId);
+    }
+
+    private function localPath(string $fileId): string
+    {
+        if (!is_dir($this->localStorageDir)) {
+            mkdir($this->localStorageDir, 0775, true);
+        }
+
+        return rtrim($this->localStorageDir, '/') . '/' . $fileId . '.pdf';
     }
 }

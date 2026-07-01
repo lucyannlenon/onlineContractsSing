@@ -1,6 +1,6 @@
 services:
   db:
-    image: mysql
+    image: mysql:8.0
     volumes:
       - ./db_data:/var/lib/mysql
     environment:
@@ -17,8 +17,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
   php:
-    build: ./docker
+    build:
+      context: ./docker
+    container_name: contrato-online-php
     tty: true
     extra_hosts:
       - "host.docker.internal:host-gateway"
@@ -26,23 +29,43 @@ services:
     depends_on:
       db:
         condition: service_healthy
-
-    ports:
-      #- '8086:80'
-      - '9004:80'
-    #  - '9004:443'
+    env_file:
+      - .env
     volumes:
       - ./:/app
-      - ./docker/apache/default.conf:/etc/apache2/sites-available/000-default.conf
+      - var_data:/app/var
+      - certs_data:/app/config/certs
       - ./bin/console:/usr/bin/app-console
     networks:
       - app-network
+    healthcheck:
+      test: [ "CMD-SHELL", "php -r 'echo 1;' > /dev/null 2>&1" ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  nginx:
+    image: nginx:stable-alpine
+    depends_on:
+      php:
+        condition: service_healthy
+    ports:
+      - '127.0.0.1:9004:80'
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./:/app:ro
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  var_data:
+  certs_data:
 #  adminer:
 #    image: adminer
 #    restart: always
 #    ports:
 #      - '8686:8080'
-

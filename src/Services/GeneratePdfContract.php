@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Entity\ContractSignature;
 use App\Enum\ContractTypeEnum;
+use App\Infrastructure\Pdf\ChromiumPdf;
 use App\Repository\ContractSignatureRepository;
-use Knp\Snappy\Pdf;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -22,7 +22,7 @@ class GeneratePdfContract
         private readonly string                      $tempDirectory,
         private readonly ContractSignatureRepository $repository,
         private readonly Environment                 $environment,
-        private readonly Pdf                         $pdf,
+        private readonly ChromiumPdf                 $pdf,
         private readonly FileGateway                 $gateway
     )
     {
@@ -97,14 +97,7 @@ class GeneratePdfContract
             $payload['signature_date'] = $item->getCreatedAt()?->format('d/m/Y H:i:s');
             $html = $this->environment->render($this->templates[$item->md5Name()], $payload);
         }
-        $this->pdf->generateFromHtml(
-            $html,
-            $fileName,
-            [
-
-            ],
-            true
-        );
+        $this->pdf->generateFromHtml($html, $fileName);
 
 
         $this->uploadToServer($fileName, $item);

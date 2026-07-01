@@ -150,15 +150,31 @@ class MainController extends AbstractController
         return $response;
     }
 
-    #[Route('/finish/{contract}')]
-    public function saveAll(Contracts $contract, CreateContractService $contractService): Response
+    #[Route('/finish/{contract}', name: 'app_finish')]
+    public function saveAll(
+        Contracts $contract,
+        CreateContractService $contractService,
+        ContractsRepository $contractsRepository
+    ): Response
     {
         $this->logger->info('Finalizing contract', [
             'contract_id' => $contract->getId()
         ]);
 
+        // marca o atual como finalizado (finish = true, notified = false)
         $contractService->finishContract($contract);
 
+        // encadeia: há outro contrato pendente do mesmo lote/CPF?
+        $next = $contractsRepository->findNextPendingForBatch($contract);
+        if ($next !== null) {
+            $this->logger->info('Chaining to next pending contract', [
+                'from_contract_id' => $contract->getId(),
+                'next_contract_id' => $next->getId(),
+            ]);
+            return $this->redirect('/accept-contract/' . $next->getId());
+        }
+
+        // nenhum pendente → encerra
         return $this->render('main/success.html.twig', [
         ]);
     }

@@ -1,7 +1,6 @@
-# Base image PHP 8.3 (Debian 12 bookworm)
-FROM php:8.3-apache-bullseye
+# Base image PHP 8.3 FPM (Debian bullseye)
+FROM php:8.3-fpm-bullseye
 
-# Instala pacotes necessários, PHP extensions, composer e symfony-cli
 RUN apt-get update && apt-get install -y \
     unzip \
     zip \
@@ -18,6 +17,8 @@ RUN apt-get update && apt-get install -y \
     libxrender1 \
     libxext6 \
     libfreetype6 \
+    libjpeg62-turbo \
+    chromium \
     sudo \
     wget \
     supervisor \
@@ -45,31 +46,21 @@ RUN apt-get update && apt-get install -y \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/* /tmp/*
 
-COPY pakages/wkhtmltox_0.12.6.1-2.bullseye_amd64.deb /tmp/
+RUN echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/opcache.ini \
+    && echo "opcache.enable_cli=1" >> /usr/local/etc/php/conf.d/opcache.ini \
+    && echo "upload_max_filesize=20M" >> /usr/local/etc/php/conf.d/uploads.ini \
+    && echo "post_max_size=22M" >> /usr/local/etc/php/conf.d/uploads.ini
 
-RUN apt-get update && apt-get install -y \
-    unzip \
-    zip \
-    libcurl4-openssl-dev \
-    libpng-dev \
-    libicu-dev \
-    libxml2-dev \
-    libzip-dev \
-    libsqlite3-dev \
-    libjpeg62-turbo\
-    wkhtmltopdf\
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/*
-#RUN cp /tmp/wkhtmltox/bin/wkhtmltopdf /usr/local/bin/ \
-#    && chmod +x /usr/local/bin/wkhtmltopdf \
-#    && rm -rf /tmp/wkhtmltox*
+WORKDIR /app
 
-## Configuração do supervisor
-RUN mkdir -p /var/log/supervisor
+RUN mkdir -p /app/var /app/config/certs \
+    && chown -R www-data:www-data /app/var /app/config/certs
 
+# Supervisord roda php-fpm + o consumidor do Symfony Scheduler no mesmo container
 COPY supervisor.d/supervisord.conf /etc/supervisor/supervisord.conf
+COPY supervisor.d/php-fpm.conf /etc/supervisor/conf.d/php-fpm.conf
+COPY supervisor.d/messenger-scheduler.conf /etc/supervisor/conf.d/messenger-scheduler.conf
 COPY supervisor.d/start-supervisord.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 
-# Script de entrada
 CMD ["/usr/local/bin/start.sh"]

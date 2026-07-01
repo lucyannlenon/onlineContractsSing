@@ -12,3 +12,5 @@
 
 /data/
 /db_data/
+/.env
+/.env.local.prod

@@ -1,0 +1,10 @@
+### Create local template contract
+POST http://localhost:9005/api/contract/add-template?token=local-signature-token
+Accept: application/json
+Content-Type: application/json
+
+{
+  "cpf": "12345678901",
+  "birthday": "1990-01-15",
+  "contractTemplate": "<!doctype html><html><head><meta charset=\"utf-8\"><style>body{font-family:Arial,sans-serif;line-height:1.45;margin:40px}.box{border:1px solid #111;padding:16px}</style></head><body><h1>Contrato local de teste</h1><p>Este contrato foi gerado para validar assinatura local com Chromium.</p><div class=\"box\"><strong>Cliente:</strong> Teste Local<br><strong>CPF:</strong> 12345678901</div></body></html>"
+}

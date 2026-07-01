@@ -12,7 +12,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Output\OutputInterface;
 
 #[AsCommand(name: 'app:show_contract', description: 'show contracts by accept key')]
-class showContractCommand extends Command
+class ShowContractCommand extends Command
 {
     public function __construct(
         private readonly ContractsRepository $contractsRepository,
