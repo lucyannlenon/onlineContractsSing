@@ -1,0 +1,10 @@
+{% if enable_btn is defined and enable_btn %}
+    <div class="accept-actions">
+        <div class="accept-actions__bar">
+            <a class="btn btn-izi-primary btn-lg" href="{{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params') | merge({'accept-key': '1'})) }}">
+                <i class="fa-solid fa-check" aria-hidden="true"></i>
+                {{ label|default('Aceitar e continuar') }}
+            </a>
+        </div>
+    </div>
+{% endif %}

@@ -1,10 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Concessão de benefícios{% endblock %}
 
 {% block body %}
 
-    <div class="container">
+    <div class="app-container document-flow">
+        {% include 'main/_stepper.html.twig' with {current_step: 3} %}
+
+        <article class="contract-document">
         <div class="term-header">
             <div class="text-center">
                 <h1>Termo de Concessão Condicional de Benefício</h1>
@@ -83,30 +86,9 @@
                 CLIENTE, fica automaticamente renovado os efeitos do presente instrumento e, por seguinte, fica
                 automaticamente renovada a fidelidade contratual do CLIENTE, pelo prazo adicional de 12 meses.</p>
         </div>
-        {% if signature %}
-            <p>ASSINATURA DIGITAL DO CLIENTE!</p>
-            <pre style="max-width: 800px; border: 1px black dashed;overflow-wrap: break-word; padding: 10px">{{ signature }}</pre>
-            <p><strong>Data de assinatura do contrato:</strong> {{ signature_date }}</p>
-        {% endif %}
+        {% include 'main/_signature.html.twig' %}
+        </article>
 
+        {% include 'main/_accept-button.html.twig' with {label: 'Aceitar termo e continuar'} %}
     </div>
-    {% if  enable_btn is defined %}
-        <div class="text-center">
-            <a class="btn btn-success btn-lg " href="{{ path(app.request.attributes.get('_route'),
-                app.request.attributes.get('_route_params') | merge({'accept-key': '1'})) }}">Aceitar termo e continuar</a>
-        </div>
-    {% endif %}
-    <style>
-        .term-header {
-            margin-bottom: 20px;
-        }
-
-        .term-section {
-            margin-bottom: 20px;
-        }
-
-        .term-signature {
-            margin-top: 40px;
-        }
-    </style>
 {% endblock %}

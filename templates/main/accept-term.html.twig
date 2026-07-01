@@ -1,11 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Termo de aceite{% endblock %}
 
 {% block body %}
 
-    <div class="container mt-5">
+    <div class="app-container document-flow">
+        {% include 'main/_stepper.html.twig' with {current_step: 1} %}
 
+        <article class="contract-document">
         <h3 class="text-center mb-4">TERMO DE ACEITE</h3>
         <p><b>IZI INTERNET E COMUNICAÇÃO LTDA</b>, com sede na Rua Dadá Teixeira,10, Bairro: Parque Invejada,
             Mutum - Minas Gerais, Cep 36955-000 inscrita no CNPJ sob o número 43.661.026/0001-93, Ato n.3348
@@ -51,19 +53,10 @@
             por estar justo e contratado o cliente assina o presente instrumento, perante as testemunhas
             abaixo assinadas, para que produza seus efeitos legais e jurídicos.</p>
 
-        {% if signature %}
-            <p>ASSINATURA DIGITAL DO CLIENTE!</p>
-            <pre style="max-width: 800px; border: 1px black dashed;overflow-wrap: break-word; padding: 10px">{{ signature }}</pre>
-            <p><strong>Data de assinatura do contrato:</strong> {{ signature_date }}</p>
-        {% endif %}
+        {% include 'main/_signature.html.twig' %}
+        </article>
 
+        {% include 'main/_accept-button.html.twig' with {label: 'Aceitar termo e continuar'} %}
     </div>
-    {% if  enable_btn is defined %}
-        <div class="text-center">
-            <a class="btn btn-success btn-lg " href="{{ path(app.request.attributes.get('_route'),
-                app.request.attributes.get('_route_params') |merge({'accept-key': '1'})) }}">Aceitar termo e
-                continuar</a>
-        </div>
-    {% endif %}
 
 {% endblock %}

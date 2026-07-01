@@ -23,7 +23,8 @@ class GeneratePdfContract
         private readonly ContractSignatureRepository $repository,
         private readonly Environment                 $environment,
         private readonly ChromiumPdf                 $pdf,
-        private readonly FileGateway                 $gateway
+        private readonly FileGateway                 $gateway,
+        private readonly SigningFlowService          $signingFlowService
     )
     {
 
@@ -86,15 +87,23 @@ class GeneratePdfContract
         $fileName = $this->getDir() . "/{$item->getId()}.pdf";
         if ($item->getContract()->getContractType() === ContractTypeEnum::TEMPLATE) {
             $payload = [
-                'contract' => $item->getContract()->toArray(),
+                'contract' => $item->getContract(),
+                'document_title' => $this->signingFlowService->templateTitle($item->getContract()),
+                'signature_progress' => $this->signingFlowService->progress($item->getContract()),
                 'signature' => $item->getSignature(),
-                'signature_date' => $item->getCreatedAt()?->format('d/m/Y H:i:s')
+                'signature_date' => $item->getCreatedAt()?->format('d/m/Y H:i:s'),
+                'signature_evidence_base64' => $item->getEvidenceBase64(),
             ];
             $html = $this->environment->render('main/accept-contract.html.twig', $payload);
         } else {
             $payload = $item->getContract()->getPayload();
+            $payload['document_title'] = $item->getName() === SigningFlowService::DOCUMENT_BENEFITS
+                ? 'Termo de concessão de benefícios'
+                : 'Termo de aceite';
+            $payload['signature_progress'] = $this->signingFlowService->progress($item->getContract());
             $payload['signature'] = $item->getSignature();
             $payload['signature_date'] = $item->getCreatedAt()?->format('d/m/Y H:i:s');
+            $payload['signature_evidence_base64'] = $item->getEvidenceBase64();
             $html = $this->environment->render($this->templates[$item->md5Name()], $payload);
         }
         $this->pdf->generateFromHtml($html, $fileName);

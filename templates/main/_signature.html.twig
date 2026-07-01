@@ -1,0 +1,36 @@
+{% if signature is defined and signature %}
+    <section class="signature-panel" aria-labelledby="signature-title">
+        <div class="signature-panel__header">
+            <div class="signature-panel__title">
+                <span class="signature-panel__icon" aria-hidden="true">
+                    <i class="fa-solid fa-file-shield"></i>
+                </span>
+                <div>
+                    <h2 id="signature-title">Documento assinado eletronicamente</h2>
+                    <p>Assinatura vinculada ao conteúdo deste documento, com registro de data, hora e identificação técnica do acesso.</p>
+                </div>
+            </div>
+            <span class="signature-badge">
+                <i class="fa-solid fa-circle-check" aria-hidden="true"></i>
+                Assinado
+            </span>
+        </div>
+
+        <div class="signature-meta">
+            <span class="signature-meta__label">Assinado em</span>
+            <span class="signature-meta__value">{{ signature_date }}</span>
+        </div>
+
+        <div class="signature-meta">
+            <span class="signature-meta__label">Assinatura criptográfica</span>
+            <code class="signature-hash">{{ signature }}</code>
+        </div>
+
+        {% if signature_evidence_base64 is defined and signature_evidence_base64 %}
+            <details class="signature-evidence">
+                <summary>Dados técnicos da assinatura (base64)</summary>
+                <code>{{ signature_evidence_base64 }}</code>
+            </details>
+        {% endif %}
+    </section>
+{% endif %}

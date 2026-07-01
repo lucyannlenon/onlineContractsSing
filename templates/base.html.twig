@@ -1,22 +1,713 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>izi</text></svg>">
+        <link rel="icon" type="image/png" href="/img/favicon.png">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
               integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
               crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
               integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-              crossorigin="anonymous" referrerpolicy="no-referrer"/> {% block stylesheets %}
+              crossorigin="anonymous" referrerpolicy="no-referrer"/>
+        <style>
+            :root {
+                --izi-orange: #F97316;
+                --izi-orange-dark: #EA580C;
+                --izi-yellow: #FBBF24;
+                --izi-bg: #FAF9F7;
+                --izi-surface: #FFFFFF;
+                --izi-ink: #1F2937;
+                --izi-muted: #6B7280;
+                --izi-border: #E7E5E4;
+                --izi-success: #16A34A;
+                --izi-radius: 16px;
+                --izi-shadow: 0 4px 24px rgba(17, 24, 39, .08);
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                min-height: 100vh;
+                margin: 0;
+                background:
+                    linear-gradient(180deg, rgba(251, 191, 36, .10), rgba(250, 249, 247, 0) 280px),
+                    var(--izi-bg);
+                color: var(--izi-ink);
+                font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            a {
+                color: var(--izi-orange-dark);
+                font-weight: 600;
+                text-decoration: none;
+            }
+
+            a:hover {
+                color: var(--izi-orange);
+                text-decoration: underline;
+            }
+
+            .app-shell {
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .brand-header {
+                background: rgba(255, 255, 255, .96);
+                border-bottom: 1px solid rgba(231, 229, 228, .75);
+                box-shadow: 0 1px 12px rgba(17, 24, 39, .04);
+                position: sticky;
+                top: 0;
+                z-index: 20;
+            }
+
+            .brand-header__inner {
+                width: min(100% - 32px, 1120px);
+                min-height: 68px;
+                margin: 0 auto;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 24px;
+            }
+
+            .brand-wordmark {
+                display: inline-flex;
+                align-items: center;
+                width: 72px;
+                height: 44px;
+                text-decoration: none;
+            }
+
+            .brand-wordmark:hover {
+                text-decoration: none;
+            }
+
+            .brand-logo {
+                display: block;
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+
+            .brand-header__support {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                color: var(--izi-muted);
+                font-size: .9rem;
+                font-weight: 600;
+                white-space: nowrap;
+            }
+
+            .brand-ribbon {
+                height: 3px;
+                background: linear-gradient(90deg, var(--izi-orange), var(--izi-yellow));
+            }
+
+            .app-main {
+                flex: 1;
+                width: 100%;
+                padding: 44px 0 56px;
+            }
+
+            .app-container {
+                width: min(100% - 32px, 960px);
+                margin: 0 auto;
+            }
+
+            .app-container--narrow {
+                width: min(100% - 32px, 440px);
+            }
+
+            .app-card,
+            .contract-document,
+            .success-card {
+                background: var(--izi-surface);
+                border: 1px solid rgba(231, 229, 228, .92);
+                border-radius: var(--izi-radius);
+                box-shadow: var(--izi-shadow);
+            }
+
+            .app-card {
+                padding: 34px;
+            }
+
+            .eyebrow {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 10px;
+                color: var(--izi-orange-dark);
+                font-size: .78rem;
+                font-weight: 800;
+                letter-spacing: .08em;
+                text-transform: uppercase;
+            }
+
+            .screen-title {
+                margin: 0 0 10px;
+                color: var(--izi-ink);
+                font-size: clamp(1.75rem, 4vw, 2.35rem);
+                font-weight: 800;
+                letter-spacing: 0;
+                line-height: 1.12;
+            }
+
+            .screen-subtitle {
+                margin: 0 0 28px;
+                color: var(--izi-muted);
+                font-size: 1rem;
+                line-height: 1.6;
+            }
+
+            .form-label {
+                color: var(--izi-ink);
+                font-size: .92rem;
+                font-weight: 700;
+            }
+
+            .form-control {
+                min-height: 48px;
+                border-color: var(--izi-border);
+                border-radius: 12px;
+                color: var(--izi-ink);
+                font-size: 1rem;
+            }
+
+            .form-control:focus {
+                border-color: var(--izi-orange);
+                box-shadow: 0 0 0 .22rem rgba(249, 115, 22, .16);
+            }
+
+            .btn-izi-primary {
+                min-height: 50px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                border: 0;
+                border-radius: 12px;
+                background: linear-gradient(135deg, var(--izi-orange), var(--izi-orange-dark));
+                color: #FFFFFF;
+                font-weight: 800;
+                box-shadow: 0 14px 30px rgba(249, 115, 22, .26);
+            }
+
+            .btn-izi-primary:hover,
+            .btn-izi-primary:focus {
+                background: linear-gradient(135deg, var(--izi-orange-dark), #C2410C);
+                color: #FFFFFF;
+                text-decoration: none;
+            }
+
+            .btn-izi-primary:focus {
+                box-shadow: 0 0 0 .22rem rgba(249, 115, 22, .24), 0 14px 30px rgba(249, 115, 22, .26);
+            }
+
+            .document-flow {
+                display: grid;
+                gap: 22px;
+            }
+
+            .contract-document {
+                padding: clamp(24px, 4vw, 48px);
+                overflow: hidden;
+            }
+
+            .contract-document h1,
+            .contract-document h2,
+            .contract-document h3,
+            .contract-document h4,
+            .contract-document h5 {
+                color: var(--izi-ink);
+                font-weight: 800;
+                letter-spacing: 0;
+                line-height: 1.24;
+            }
+
+            .contract-document h1 {
+                margin: 0 0 24px;
+                font-size: clamp(1.65rem, 4vw, 2.3rem);
+                text-align: center;
+            }
+
+            .contract-document h3 {
+                margin: 30px 0 16px;
+                padding-bottom: 10px;
+                border-bottom: 1px solid var(--izi-border);
+                font-size: 1.28rem;
+            }
+
+            .contract-document h4 {
+                margin: 28px 0 14px;
+                color: var(--izi-orange-dark);
+                font-size: 1.08rem;
+                text-transform: uppercase;
+            }
+
+            .contract-document h5 {
+                margin: 22px 0 14px;
+                font-size: 1rem;
+            }
+
+            .contract-document p,
+            .contract-document li {
+                color: var(--izi-ink);
+                font-size: 1rem;
+                line-height: 1.72;
+            }
+
+            .contract-document strong,
+            .contract-document b {
+                color: #111827;
+                font-weight: 800;
+            }
+
+            .contract-document .row {
+                row-gap: 8px;
+            }
+
+            .contract-document .term-header,
+            .contract-document .term-section {
+                margin-bottom: 22px;
+            }
+
+            .contract-document table,
+            .contract-document .table {
+                width: 100%;
+                margin: 18px 0 26px;
+                overflow: hidden;
+                border-color: var(--izi-border);
+                border-radius: 12px;
+                vertical-align: middle;
+            }
+
+            .contract-document thead th,
+            .contract-document .table thead th {
+                background: rgba(251, 191, 36, .18);
+                color: var(--izi-ink);
+                font-size: .88rem;
+                font-weight: 800;
+                text-transform: uppercase;
+            }
+
+            .signature-panel {
+                display: grid;
+                gap: 18px;
+                margin-top: 34px;
+                padding: 22px;
+                border: 1px solid rgba(249, 115, 22, .20);
+                border-radius: 14px;
+                background: linear-gradient(180deg, rgba(251, 191, 36, .08), rgba(255, 255, 255, .98));
+            }
+
+            .signature-panel__header {
+                display: flex;
+                align-items: flex-start;
+                justify-content: space-between;
+                gap: 16px;
+            }
+
+            .signature-panel__title {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                min-width: 0;
+            }
+
+            .signature-panel__icon {
+                width: 44px;
+                height: 44px;
+                display: inline-grid;
+                flex: 0 0 44px;
+                place-items: center;
+                border-radius: 14px;
+                background: #FFFFFF;
+                color: var(--izi-orange-dark);
+                box-shadow: 0 8px 18px rgba(17, 24, 39, .08);
+            }
+
+            .signature-panel h2 {
+                margin: 0;
+                font-size: 1.06rem;
+            }
+
+            .signature-panel p {
+                margin: 3px 0 0;
+                color: var(--izi-muted);
+                font-size: .9rem;
+                line-height: 1.45;
+            }
+
+            .signature-badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                padding: 7px 10px;
+                border-radius: 999px;
+                background: rgba(22, 163, 74, .12);
+                color: #15803D;
+                font-size: .78rem;
+                font-weight: 800;
+                white-space: nowrap;
+            }
+
+            .signature-hash {
+                display: block;
+                margin: 0;
+                padding: 16px;
+                border: 1px solid rgba(251, 191, 36, .40);
+                border-radius: 12px;
+                background: rgba(251, 191, 36, .14);
+                color: #78350F;
+                font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+                font-size: .88rem;
+                line-height: 1.65;
+                overflow-wrap: anywhere;
+                white-space: pre-wrap;
+            }
+
+            .signature-evidence {
+                padding-top: 2px;
+            }
+
+            .signature-evidence summary {
+                color: var(--izi-orange-dark);
+                cursor: pointer;
+                font-size: .9rem;
+                font-weight: 800;
+            }
+
+            .signature-evidence code {
+                display: block;
+                margin-top: 10px;
+                padding: 14px;
+                border: 1px solid var(--izi-border);
+                border-radius: 12px;
+                background: #FFFFFF;
+                color: #374151;
+                font-size: .78rem;
+                line-height: 1.55;
+                overflow-wrap: anywhere;
+                white-space: pre-wrap;
+            }
+
+            .signature-meta {
+                display: grid;
+                gap: 4px;
+            }
+
+            .signature-meta__label {
+                color: var(--izi-muted);
+                font-size: .76rem;
+                font-weight: 800;
+                letter-spacing: .08em;
+                text-transform: uppercase;
+            }
+
+            .signature-meta__value {
+                color: var(--izi-ink);
+                font-weight: 700;
+            }
+
+            .stepper {
+                padding: 18px;
+                border: 1px solid var(--izi-border);
+                border-radius: var(--izi-radius);
+                background: rgba(255, 255, 255, .88);
+                box-shadow: 0 2px 16px rgba(17, 24, 39, .05);
+            }
+
+            .stepper__list {
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 10px;
+                margin: 0;
+                padding: 0;
+                list-style: none;
+            }
+
+            .stepper__item {
+                position: relative;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                min-width: 0;
+                color: var(--izi-muted);
+                font-size: .86rem;
+                font-weight: 700;
+            }
+
+            .stepper__dot {
+                width: 30px;
+                height: 30px;
+                display: inline-grid;
+                flex: 0 0 30px;
+                place-items: center;
+                border: 1px solid var(--izi-border);
+                border-radius: 999px;
+                background: #FFFFFF;
+                color: var(--izi-muted);
+                font-size: .8rem;
+                font-weight: 800;
+            }
+
+            .stepper__item.is-active {
+                color: var(--izi-ink);
+            }
+
+            .stepper__item.is-active .stepper__dot {
+                border-color: var(--izi-orange);
+                background: var(--izi-orange);
+                color: #FFFFFF;
+                box-shadow: 0 8px 16px rgba(249, 115, 22, .22);
+            }
+
+            .stepper__item.is-complete .stepper__dot {
+                border-color: rgba(22, 163, 74, .25);
+                background: rgba(22, 163, 74, .12);
+                color: #15803D;
+            }
+
+            .signature-progress {
+                display: grid;
+                gap: 14px;
+            }
+
+            .signature-progress__badge {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 10px;
+                color: var(--izi-orange-dark);
+                font-size: .82rem;
+                font-weight: 800;
+            }
+
+            .signature-progress h1 {
+                margin: 0;
+                color: var(--izi-ink);
+                font-size: clamp(1.25rem, 3vw, 1.7rem);
+                font-weight: 800;
+                line-height: 1.24;
+            }
+
+            .signature-progress__meter {
+                width: 100%;
+                height: 9px;
+                overflow: hidden;
+                border-radius: 999px;
+                background: rgba(231, 229, 228, .9);
+            }
+
+            .signature-progress__meter span {
+                display: block;
+                height: 100%;
+                border-radius: inherit;
+                background: linear-gradient(90deg, var(--izi-orange), var(--izi-yellow));
+            }
+
+            .accept-actions {
+                display: flex;
+                justify-content: center;
+                padding: 2px 0 0;
+            }
+
+            .accept-actions__bar {
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+
+            .success-card {
+                max-width: 720px;
+                margin: 0 auto;
+                padding: clamp(28px, 5vw, 48px);
+                text-align: center;
+            }
+
+            .success-card__mark {
+                width: 74px;
+                height: 74px;
+                display: inline-grid;
+                place-items: center;
+                margin-bottom: 22px;
+                border-radius: 24px;
+                background: rgba(22, 163, 74, .12);
+                color: var(--izi-success);
+                font-size: 2rem;
+            }
+
+            .success-card h1 {
+                margin: 0 0 14px;
+                font-size: clamp(1.8rem, 4vw, 2.45rem);
+                font-weight: 800;
+            }
+
+            .success-card p {
+                margin: 0;
+                color: var(--izi-muted);
+                font-size: 1rem;
+                line-height: 1.7;
+            }
+
+            .success-card__divider {
+                width: 100%;
+                height: 1px;
+                margin: 26px 0;
+                background: var(--izi-border);
+            }
+
+            .brand-footer {
+                border-top: 1px solid rgba(231, 229, 228, .82);
+                background: rgba(255, 255, 255, .74);
+            }
+
+            .brand-footer__inner {
+                width: min(100% - 32px, 1120px);
+                margin: 0 auto;
+                padding: 22px 0;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 18px;
+                color: var(--izi-muted);
+                font-size: .9rem;
+            }
+
+            .brand-footer__links {
+                display: flex;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: flex-end;
+                gap: 14px;
+            }
+
+            .brand-footer__links a {
+                display: inline-flex;
+                align-items: center;
+                gap: 7px;
+                color: var(--izi-muted);
+                font-weight: 700;
+            }
+
+            @media (max-width: 767.98px) {
+                .brand-header__support {
+                    display: none;
+                }
+
+                .app-main {
+                    padding: 28px 0 104px;
+                }
+
+                .app-card {
+                    padding: 26px 22px;
+                }
+
+                .stepper {
+                    padding: 14px;
+                }
+
+                .stepper__list {
+                    grid-template-columns: repeat(2, minmax(0, 1fr));
+                    gap: 12px;
+                }
+
+                .stepper__item {
+                    font-size: .8rem;
+                }
+
+                .contract-document {
+                    padding: 22px 18px;
+                }
+
+                .contract-document .row > [class*="col-"] {
+                    width: 100%;
+                }
+
+                .signature-panel {
+                    padding: 18px;
+                }
+
+                .signature-panel__header {
+                    display: grid;
+                }
+
+                .signature-badge {
+                    width: fit-content;
+                }
+
+                .accept-actions {
+                    position: fixed;
+                    right: 0;
+                    bottom: 0;
+                    left: 0;
+                    z-index: 30;
+                    padding: 12px 16px;
+                    background: rgba(255, 255, 255, .94);
+                    border-top: 1px solid var(--izi-border);
+                    box-shadow: 0 -10px 24px rgba(17, 24, 39, .10);
+                }
+
+                .accept-actions .btn {
+                    width: 100%;
+                }
+
+                .brand-footer__inner {
+                    display: grid;
+                    justify-items: start;
+                }
+
+                .brand-footer__links {
+                    justify-content: flex-start;
+                }
+            }
+        </style>
+        {% block stylesheets %}
         {% endblock %}
 
         {% block javascripts %}
         {% endblock %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        <div class="app-shell">
+            <header class="brand-header">
+                <div class="brand-header__inner">
+                    <a class="brand-wordmark" href="{{ path('app_main') }}" aria-label="IZI Internet">
+                        <img class="brand-logo" src="/img/izi-logo.png" alt="IZI Internet">
+                    </a>
+                    <div class="brand-header__support">
+                        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                        Contrato digital seguro
+                    </div>
+                </div>
+                <div class="brand-ribbon" aria-hidden="true"></div>
+            </header>
+
+            <main class="app-main">
+                {% block body %}{% endblock %}
+            </main>
+
+            <footer class="brand-footer">
+                <div class="brand-footer__inner">
+                    <div>IZI Internet e Comunicação</div>
+                    <div class="brand-footer__links">
+                        <a href="mailto:ouvidoria2@izi.com.br"><i class="fa-regular fa-envelope" aria-hidden="true"></i> ouvidoria2@izi.com.br</a>
+                        <a href="tel:+553330380066"><i class="fa-solid fa-phone" aria-hidden="true"></i> 33 3038-0066</a>
+                        <a href="https://wa.me/553330380066" target="_blank" rel="noopener"><i class="fab fa-whatsapp" aria-hidden="true"></i> WhatsApp</a>
+                    </div>
+                </div>
+            </footer>
+        </div>
     </body>
 </html>

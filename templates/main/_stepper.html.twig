@@ -1,0 +1,18 @@
+<nav class="stepper" aria-label="Progresso da assinatura">
+    <div class="signature-progress">
+        <div>
+            <span class="signature-progress__badge">
+                <i class="fa-solid fa-file-signature" aria-hidden="true"></i>
+                {{ signature_progress.label|default('Assinatura em andamento') }}
+            </span>
+            <h1>{{ document_title|default('Documento atual') }}</h1>
+        </div>
+
+        {% if signature_progress is defined %}
+            {% set percent = signature_progress.total > 0 ? ((signature_progress.signed / signature_progress.total) * 100) : 0 %}
+            <div class="signature-progress__meter" aria-label="{{ signature_progress.label }}">
+                <span style="width: {{ percent }}%"></span>
+            </div>
+        {% endif %}
+    </div>
+</nav>

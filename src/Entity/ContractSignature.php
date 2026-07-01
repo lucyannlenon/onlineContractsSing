@@ -32,6 +32,9 @@ class ContractSignature
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
+    #[ORM\Column(nullable: true)]
+    private ?array $evidence = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -105,12 +108,35 @@ class ContractSignature
         return $this;
     }
 
+    public function getEvidence(): ?array
+    {
+        return $this->evidence;
+    }
+
+    public function setEvidence(?array $evidence): static
+    {
+        $this->evidence = $evidence;
+
+        return $this;
+    }
+
+    public function getEvidenceBase64(): ?string
+    {
+        if ($this->evidence === null) {
+            return null;
+        }
+
+        return base64_encode(json_encode($this->evidence, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    }
+
     public function toArray(): array
     {
         return [
             'id' => $this->id,
             'contract' => $this->contract?->getId(),
             'signature' => $this->signature,
+            'evidence' => $this->evidence,
+            'evidenceBase64' => $this->getEvidenceBase64(),
             'link' => $this->link,
             'createdAt' => $this->createdAt?->format('Y-m-d H:i:s'),
             'name' => $this->name

@@ -5,6 +5,7 @@ REMOTE_HOST ?= izi-apps
 REMOTE_PATH ?= /Docker/izi-contrato-online
 ENV_FILE ?= .env.local.prod
 DIST_DIR ?= dist
+SSH ?= ssh -F $(HOME)/.ssh/config
 
 # ========================
 # BUILD
@@ -28,7 +29,7 @@ prepare:
 	rm -rf $(DIST_DIR)
 	mkdir -p $(DIST_DIR)
 
-	rsync -av \
+	rsync -rltD --no-owner --no-group \
 		--exclude=$(DIST_DIR) \
 		--exclude=.git \
 		--exclude=.idea \
@@ -46,12 +47,13 @@ prepare:
 # REMOTE
 # ========================
 stop:
-	ssh $(REMOTE_HOST) "\
+	$(SSH) $(REMOTE_HOST) "\
 		cd $(REMOTE_PATH) 2>/dev/null && docker compose down 2>/dev/null || true \
 	"
 
 deploy:
 	rsync -rz \
+		-e "$(SSH)" \
 		--delete \
 		--delete-after \
 		--exclude=var \
@@ -59,7 +61,7 @@ deploy:
 		$(DIST_DIR)/ $(REMOTE_HOST):$(REMOTE_PATH)
 
 remote-rebuild:
-	ssh $(REMOTE_HOST) "\
+	$(SSH) $(REMOTE_HOST) "\
 		cd $(REMOTE_PATH) && \
 		docker compose build --no-cache && \
 		docker compose up -d --wait --remove-orphans --force-recreate && \
@@ -67,7 +69,7 @@ remote-rebuild:
 	"
 
 remote-build:
-	ssh $(REMOTE_HOST) "\
+	$(SSH) $(REMOTE_HOST) "\
 		cd $(REMOTE_PATH) && \
 		docker compose build php && \
 		docker compose up -d --wait --remove-orphans && \
@@ -75,7 +77,7 @@ remote-build:
 	"
 
 remote:
-	ssh $(REMOTE_HOST) "\
+	$(SSH) $(REMOTE_HOST) "\
 		cd $(REMOTE_PATH) && \
 		docker compose up -d --wait --no-build --remove-orphans \
 	"
@@ -84,19 +86,19 @@ remote:
 # APP TASKS
 # ========================
 migrate:
-	ssh $(REMOTE_HOST) "\
+	$(SSH) $(REMOTE_HOST) "\
 		cd $(REMOTE_PATH) && \
 		docker compose exec php php bin/console doctrine:migrations:migrate --no-interaction \
 	"
 
 keys:
-	ssh $(REMOTE_HOST) "\
+	$(SSH) $(REMOTE_HOST) "\
 		cd $(REMOTE_PATH) && \
 		docker compose exec php php bin/console app:generate-keys \
 	"
 
 cache:
-	ssh $(REMOTE_HOST) "\
+	$(SSH) $(REMOTE_HOST) "\
 		cd $(REMOTE_PATH) && \
 		docker compose exec php php bin/console cache:clear --env=prod && \
 		docker compose exec php php bin/console cache:warmup --env=prod \
@@ -109,7 +111,7 @@ end:
 	rm -rf $(DIST_DIR)
 
 prune:
-	ssh $(REMOTE_HOST) "\
+	$(SSH) $(REMOTE_HOST) "\
 		cd $(REMOTE_PATH) && docker system prune -f \
 	"
 

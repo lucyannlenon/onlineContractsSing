@@ -4,12 +4,11 @@ namespace App\Controller;
 
 use App\DTO\AuthMainDto;
 use App\Entity\Contracts;
-use App\Enum\ContractTypeEnum;
 use App\Repository\ContractsRepository;
 use App\Services\ContractSignatureService;
 use App\Services\CreateContractService;
 use App\Services\LocalToken;
-use App\Services\SignatureService;
+use App\Services\SigningFlowService;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -39,7 +38,11 @@ class MainController extends AbstractController
     }
 
     #[Route('/', name: 'app_main_post', methods: ['POST'])]
-    public function checkCredentials(#[MapRequestPayload] AuthMainDto $authMainDTO, ContractsRepository $repository): Response
+    public function checkCredentials(
+        #[MapRequestPayload] AuthMainDto $authMainDTO,
+        ContractsRepository $repository,
+        SigningFlowService $signingFlowService
+    ): Response
     {
         $this->logger->info('Checking credentials', [
             'cpf' => $authMainDTO->getCpf(),
@@ -57,61 +60,87 @@ class MainController extends AbstractController
                 'error' => "Nenhum contrato entrado para os dados fornecidos"
             ]);
         }
-        return $this->redirect("/accept-contract/{$item->getId()}");
+
+        $nextUrl = $signingFlowService->nextPendingDocumentUrl($item);
+        if ($nextUrl !== null) {
+            return $this->redirect($nextUrl);
+        }
+
+        return $this->render('main/success.html.twig', [
+            'signature_progress' => $signingFlowService->progress($item),
+        ]);
     }
 
     #[Route('/accept-contract/{contract}', name: 'app_accept_contract')]
-    public function acceptContractTemplate(Contracts $contract, Request $request, ContractSignatureService $signatureService): Response
+    public function acceptContractTemplate(
+        Contracts $contract,
+        Request $request,
+        ContractSignatureService $signatureService,
+        SigningFlowService $signingFlowService
+    ): Response
     {
         $this->logger->info('Processing contract template acceptance', [
             'contract_id' => $contract->getId(),
             'contract_type' => $contract->getContractType()?->name
         ]);
 
-        if ($contract->getContractType() == ContractTypeEnum::DEFAULT || $contract->getContractType() == null) {
+        if (!$signingFlowService->isTemplateContract($contract)) {
+            if ($contract->getSignaturesByName(SigningFlowService::DOCUMENT_ACCEPT_TERM)) {
+                return $this->redirect('/granting-benefits/' . $contract->getId());
+            }
+
             return $this->redirect('/accept-term/' . $contract->getId());
         }
 
         $acceptKey = $request->get('accept-key', false);
+        $signature = $contract->getSignaturesByName(SigningFlowService::DOCUMENT_CONTRACT);
         $payload = [
             'contract' => $contract,
-            'enable_btn' => !$acceptKey
+            'enable_btn' => !$acceptKey,
+            'document_title' => $signingFlowService->templateTitle($contract),
+            'signature_progress' => $signingFlowService->progress($contract),
+            'signature' => $signature?->getSignature(),
+            'signature_date' => $signature?->getCreatedAt()?->format('d/m/Y H:i:s'),
+            'signature_evidence_base64' => $signature?->getEvidenceBase64(),
         ];
         $response = $this->render('main/accept-contract.html.twig', $payload);
 
         if ($acceptKey) {
-            $clientInfo = [
-                'ip_address' => $request->getClientIps(),
-                'user_agent' => $request->getUserInfo(),
-                'timestamp' => time()
-            ];
-
-            $signatureService->singContractTerm($clientInfo, $response->getContent(), $contract);
+            $signatureService->singContractTerm($this->clientInfo($request), $response->getContent(), $contract);
             return $this->redirect('/finish/' . $contract->getId());
         }
         return $response;
     }
 
     #[Route('/accept-term/{contract}')]
-    public function acceptTerm(Contracts $contract, Request $request, ContractSignatureService $signatureService): Response
+    public function acceptTerm(
+        Contracts $contract,
+        Request $request,
+        ContractSignatureService $signatureService,
+        SigningFlowService $signingFlowService
+    ): Response
     {
         $this->logger->info('Processing term acceptance', [
             'contract_id' => $contract->getId()
         ]);
 
         $acceptKey = $request->get('accept-key', false);
+        if (!$acceptKey && $contract->getSignaturesByName(SigningFlowService::DOCUMENT_ACCEPT_TERM)) {
+            return $this->redirect('/granting-benefits/' . $contract->getId());
+        }
+
+        $signature = $contract->getSignaturesByName(SigningFlowService::DOCUMENT_ACCEPT_TERM);
         $payload = $contract->getPayload();
         $payload['enable_btn'] = !$acceptKey;
+        $payload['document_title'] = 'Termo de aceite';
+        $payload['signature_progress'] = $signingFlowService->progress($contract);
+        $payload['signature'] = $signature?->getSignature();
+        $payload['signature_date'] = $signature?->getCreatedAt()?->format('d/m/Y H:i:s');
+        $payload['signature_evidence_base64'] = $signature?->getEvidenceBase64();
         $response = $this->render('main/accept-term.html.twig', $payload);
 
         if ($acceptKey) {
-            $clientInfo = [
-                'ip_address' => $request->getClientIps(),
-                'user_agent' => $request->getUserInfo(),
-                'timestamp' => time()
-            ];
-
-            $signatureService->singAcceptTerm($clientInfo, $response->getContent(), $contract);
+            $signatureService->singAcceptTerm($this->clientInfo($request), $response->getContent(), $contract);
             return $this->redirect('/granting-benefits/' . $contract->getId());
         }
         return $response;
@@ -125,7 +154,12 @@ class MainController extends AbstractController
      * @throws Exception
      */
     #[Route('/granting-benefits/{contract}')]
-    public function grantingBenefits(Contracts $contract, Request $request, ContractSignatureService $signatureService): Response
+    public function grantingBenefits(
+        Contracts $contract,
+        Request $request,
+        ContractSignatureService $signatureService,
+        SigningFlowService $signingFlowService
+    ): Response
     {
         $this->logger->info('Processing benefits granting', [
             'contract_id' => $contract->getId()
@@ -134,17 +168,17 @@ class MainController extends AbstractController
 
         $payload = $contract->getPayload();
         $acceptKey = $request->get('accept-key', false);
+        $signature = $contract->getSignaturesByName(SigningFlowService::DOCUMENT_BENEFITS);
         $payload['enable_btn'] = !$acceptKey;
+        $payload['document_title'] = 'Termo de concessão de benefícios';
+        $payload['signature_progress'] = $signingFlowService->progress($contract);
+        $payload['signature'] = $signature?->getSignature();
+        $payload['signature_date'] = $signature?->getCreatedAt()?->format('d/m/Y H:i:s');
+        $payload['signature_evidence_base64'] = $signature?->getEvidenceBase64();
 
         $response = $this->render('main/granting-benefits.html.twig', $payload);
         if ($acceptKey) {
-            $clientInfo = [
-                'ip_address' => $request->getClientIps(),
-                'user_agent' => $request->getUserInfo(),
-                'timestamp' => time()
-            ];
-
-            $signatureService->singBenefitsTerm($clientInfo, $response->getContent(), $contract);
+            $signatureService->singBenefitsTerm($this->clientInfo($request), $response->getContent(), $contract);
             return $this->redirect('/finish/' . $contract->getId());
         }
         return $response;
@@ -154,7 +188,7 @@ class MainController extends AbstractController
     public function saveAll(
         Contracts $contract,
         CreateContractService $contractService,
-        ContractsRepository $contractsRepository
+        SigningFlowService $signingFlowService
     ): Response
     {
         $this->logger->info('Finalizing contract', [
@@ -164,18 +198,31 @@ class MainController extends AbstractController
         // marca o atual como finalizado (finish = true, notified = false)
         $contractService->finishContract($contract);
 
-        // encadeia: há outro contrato pendente do mesmo lote/CPF?
-        $next = $contractsRepository->findNextPendingForBatch($contract);
-        if ($next !== null) {
+        // encadeia: há outro documento pendente do mesmo lote/CPF?
+        $nextUrl = $signingFlowService->nextPendingDocumentUrl($contract);
+        if ($nextUrl !== null) {
             $this->logger->info('Chaining to next pending contract', [
                 'from_contract_id' => $contract->getId(),
-                'next_contract_id' => $next->getId(),
+                'next_url' => $nextUrl,
             ]);
-            return $this->redirect('/accept-contract/' . $next->getId());
+            return $this->redirect($nextUrl);
         }
 
         // nenhum pendente → encerra
         return $this->render('main/success.html.twig', [
+            'signature_progress' => $signingFlowService->progress($contract),
         ]);
+    }
+
+    private function clientInfo(Request $request): array
+    {
+        return [
+            'client_ip' => $request->getClientIp(),
+            'client_ips' => $request->getClientIps(),
+            'user_agent' => $request->headers->get('User-Agent'),
+            'forwarded_for' => $request->headers->get('X-Forwarded-For'),
+            'forwarded_proto' => $request->headers->get('X-Forwarded-Proto'),
+            'accepted_at_unix' => time(),
+        ];
     }
 }

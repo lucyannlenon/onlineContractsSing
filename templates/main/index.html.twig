@@ -1,13 +1,21 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Home{% endblock %}
+{% block title %}Assine seu contrato{% endblock %}
 
 {% block body %}
-    <div class="container" style="max-width: 400px">
-        <h1 class="text-center">Assine seu Contrato</h1>
+    <div class="app-container app-container--narrow">
+        <section class="app-card">
+            <div class="eyebrow">
+                <i class="fa-solid fa-file-signature" aria-hidden="true"></i>
+                Assinatura digital
+            </div>
+            <h1 class="screen-title">Assine seu contrato</h1>
+            <p class="screen-subtitle">Informe os dados recebidos para visualizar e aceitar os documentos do seu plano IZI.</p>
+
         {% if error %}
-            <div class="alert alert-danger">{{ error}}</div>
+            <div class="alert alert-danger">{{ error }}</div>
         {% endif %}
+
         <form action="{{ path('app_main_post') }}" method="post">
             <div class="mb-3">
                 <label for="username" class="form-label">CPF/CNPJ</label>
@@ -23,8 +31,12 @@
                        oninput="applyDateMask(this)">
 
             </div>
-            <button type="submit" class="btn btn-primary w-100">Visualizar contrato</button>
+            <button type="submit" class="btn btn-izi-primary w-100">
+                <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
+                Visualizar contrato
+            </button>
         </form>
+        </section>
     </div>
     <script type="text/javascript">
         function applyDateMask(input) {
