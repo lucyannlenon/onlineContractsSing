@@ -10,6 +10,12 @@ SSH ?= ssh -F $(HOME)/.ssh/config
 # ========================
 # BUILD
 # ========================
+# `vendor` colide com o diretorio vendor/: sem .PHONY o make considera o
+# alvo "up to date" e nunca roda o composer install.
+.PHONY: vendor prepare stop deploy remote-rebuild remote-build remote \
+	migrate keys cache supervisor-restart end prune \
+	release update bootstrap infra
+
 vendor:
 	docker run --rm \
 		-v $(shell pwd):/app \
