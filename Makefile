@@ -17,10 +17,13 @@ SSH ?= ssh -F $(HOME)/.ssh/config
 	release update bootstrap infra
 
 vendor:
+	# --no-scripts: a imagem composer:2 nao tem ext-intl/redis para rodar o
+	# cache:clear dos auto-scripts; cache e warmup ja rodam no servidor.
 	docker run --rm \
 		-v $(shell pwd):/app \
 		-w /app \
-		composer:2 install --no-dev --no-interaction --optimize-autoloader
+		-e APP_ENV=prod \
+		composer:2 install --no-dev --no-interaction --optimize-autoloader --no-scripts
 
 # ========================
 # PREPARE DIST
