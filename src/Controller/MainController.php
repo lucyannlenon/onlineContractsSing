@@ -201,6 +201,20 @@ class MainController extends AbstractController
         // marca o atual como finalizado (finish = true, notified = false)
         $contractService->finishContract($contract);
 
+        // Dispara a geração+notificação por evento (caminho rápido) para ESTE
+        // contrato — antes do encadeamento, senão só o último da cadeia recebe
+        // notificação realtime e os demais esperam o fallback periódico.
+        // Envolto em try/catch: se o broker estiver fora, o usuário não percebe
+        // e os jobs periódicos concluem como fallback.
+        try {
+            $bus->dispatch(new FinalizeContractNotification($contract->getId()));
+        } catch (\Throwable $exception) {
+            $this->logger->error('Could not enqueue finalize notification', [
+                'contract_id' => $contract->getId(),
+                'error' => $exception->getMessage(),
+            ]);
+        }
+
         // encadeia: há outro documento pendente do mesmo lote/CPF?
         $nextUrl = $signingFlowService->nextPendingDocumentUrl($contract);
         if ($nextUrl !== null) {
@@ -209,18 +223,6 @@ class MainController extends AbstractController
                 'next_url' => $nextUrl,
             ]);
             return $this->redirect($nextUrl);
-        }
-
-        // nenhum pendente → encerra. Dispara a geração+notificação por evento
-        // (caminho rápido). Envolto em try/catch: se o broker estiver fora, o
-        // usuário não percebe e os jobs periódicos concluem como fallback.
-        try {
-            $bus->dispatch(new FinalizeContractNotification($contract->getId()));
-        } catch (\Throwable $exception) {
-            $this->logger->error('Could not enqueue finalize notification', [
-                'contract_id' => $contract->getId(),
-                'error' => $exception->getMessage(),
-            ]);
         }
 
         return $this->render('main/success.html.twig', [
