@@ -5,7 +5,9 @@
 {% block body %}
 
     <div class="app-container document-flow">
-        {% include 'main/_stepper.html.twig' with {current_step: 2} %}
+        {% if is_pdf is not defined or not is_pdf %}
+            {% include 'main/_stepper.html.twig' with {current_step: 2} %}
+        {% endif %}
 
         <article class="contract-document">
             {{ contract.template | raw }}

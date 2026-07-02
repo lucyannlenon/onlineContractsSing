@@ -14,3 +14,4 @@
 /db_data/
 /.env
 /.env.local.prod
+/dist/

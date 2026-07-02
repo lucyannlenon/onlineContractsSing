@@ -104,6 +104,12 @@ cache:
 		docker compose exec php php bin/console cache:warmup --env=prod \
 	"
 
+supervisor-restart:
+	$(SSH) $(REMOTE_HOST) "\
+		cd $(REMOTE_PATH) && \
+		docker compose exec php supervisorctl -c /etc/supervisor/supervisord.conf restart all \
+	"
+
 # ========================
 # CLEANUP
 # ========================
@@ -120,7 +126,7 @@ prune:
 # `remote-build` so recria o container quando a imagem muda, logo deploy de
 # codigo puro continua rapido (build cacheado, sem recreate desnecessario).
 # Use `bootstrap` no primeiro deploy e `infra` para forcar rebuild --no-cache.
-release: vendor prepare deploy remote-build migrate cache end
+release: vendor prepare deploy remote-build migrate cache supervisor-restart end
 update: release
-bootstrap: vendor prepare deploy remote-build keys migrate cache end prune
-infra: vendor prepare deploy remote-rebuild migrate cache end prune
+bootstrap: vendor prepare deploy remote-build keys migrate cache supervisor-restart end prune
+infra: vendor prepare deploy remote-rebuild migrate cache supervisor-restart end prune

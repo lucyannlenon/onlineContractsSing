@@ -37,8 +37,8 @@ RUN apt-get update && apt-get install -y \
     pcntl \
     zip \
     sockets \
- && pecl install amqp \
- && docker-php-ext-enable amqp \
+ && pecl install amqp redis \
+ && docker-php-ext-enable amqp redis \
  && curl -sS https://getcomposer.org/installer | php -- \
     --install-dir=/usr/bin --filename=composer \
  && curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.deb.sh' | sudo -E bash \
@@ -60,6 +60,7 @@ RUN mkdir -p /app/var /app/config/certs \
 COPY supervisor.d/supervisord.conf /etc/supervisor/supervisord.conf
 COPY supervisor.d/php-fpm.conf /etc/supervisor/conf.d/php-fpm.conf
 COPY supervisor.d/messenger-scheduler.conf /etc/supervisor/conf.d/messenger-scheduler.conf
+COPY supervisor.d/messenger-async.conf /etc/supervisor/conf.d/messenger-async.conf
 COPY supervisor.d/start-supervisord.sh /usr/local/bin/start.sh
 RUN chmod +x /usr/local/bin/start.sh
 

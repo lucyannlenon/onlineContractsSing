@@ -703,6 +703,93 @@
             }
 
             @media print {
+                @page {
+                    size: A4;
+                    margin: 16mm 15mm;
+                }
+
+                body {
+                    background: #FFFFFF;
+                    -webkit-print-color-adjust: exact;
+                    print-color-adjust: exact;
+                }
+
+                .app-shell {
+                    min-height: 0;
+                }
+
+                .app-main {
+                    padding: 0;
+                }
+
+                .app-container,
+                .app-container--narrow {
+                    width: 100%;
+                }
+
+                /* Web-flow chrome must never appear in the signed document */
+                .stepper,
+                .brand-header__support,
+                .accept-actions {
+                    display: none !important;
+                }
+
+                /* Header becomes a lightweight document masthead */
+                .brand-header {
+                    position: static;
+                    border: 0;
+                    box-shadow: none;
+                    background: #FFFFFF;
+                }
+
+                .brand-header__inner {
+                    width: 100%;
+                    min-height: 0;
+                    padding-bottom: 8px;
+                }
+
+                .brand-logo {
+                    height: 38px;
+                }
+
+                .brand-ribbon {
+                    height: 2px;
+                }
+
+                /* The document itself reads as paper, not a web card */
+                .contract-document {
+                    padding: 22px 0 0;
+                    border: 0;
+                    border-radius: 0;
+                    box-shadow: none;
+                    background: #FFFFFF;
+                }
+
+                .document-flow {
+                    gap: 0;
+                }
+
+                /* Clean document footer identity */
+                .brand-footer {
+                    margin-top: 26px;
+                    border-top: 1px solid #D6D3D1;
+                    background: #FFFFFF;
+                    break-inside: avoid;
+                    page-break-inside: avoid;
+                }
+
+                .brand-footer__inner {
+                    width: 100%;
+                    padding: 12px 0 0;
+                    color: #57534E;
+                    font-size: 8.5pt;
+                }
+
+                .brand-footer__links a {
+                    color: #57534E;
+                    text-decoration: none;
+                }
+
                 .signature-panel {
                     display: block;
                     margin-top: 22px;
@@ -791,6 +878,39 @@
                 .signature-technical {
                     display: none;
                 }
+
+                .signature-validation {
+                    margin-top: 8px;
+                    padding-top: 8px;
+                    border-top: 1px dashed #D6D3D1;
+                }
+
+                .signature-validation .signature-meta__label {
+                    display: block;
+                    margin-top: 6px;
+                    color: #57534E;
+                    font-size: 7pt;
+                    letter-spacing: .05em;
+                }
+
+                .signature-validation .signature-hash {
+                    margin: 3px 0 6px;
+                    padding: 6px 8px;
+                    border: 1px solid #E7E5E4;
+                    border-radius: 0;
+                    background: #FAFAFA;
+                    color: #1F2937;
+                    font-size: 6.5pt;
+                    line-height: 1.4;
+                    overflow-wrap: anywhere;
+                    white-space: pre-wrap;
+                }
+
+                .signature-validation__hint {
+                    margin-top: 6px;
+                    color: #57534E;
+                    font-size: 7.5pt;
+                }
             }
         </style>
         {% block stylesheets %}
@@ -804,7 +924,7 @@
             <header class="brand-header">
                 <div class="brand-header__inner">
                     <a class="brand-wordmark" href="{{ path('app_main') }}" aria-label="IZI Internet">
-                        <img class="brand-logo" src="/img/izi-logo.png" alt="IZI Internet">
+                        <img class="brand-logo" src="{{ brand_logo_base64|default('/img/izi-logo.png') }}" alt="IZI Internet">
                     </a>
                     <div class="brand-header__support">
                         <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>

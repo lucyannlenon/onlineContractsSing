@@ -29,15 +29,31 @@
 
         <p class="signature-note">A integridade deste documento foi registrada por assinatura eletrônica vinculada ao conteúdo apresentado no momento do aceite.</p>
 
-        <details class="signature-technical">
-            <summary>Dados técnicos da assinatura</summary>
-            <span class="signature-meta__label">Assinatura criptográfica</span>
-            <code class="signature-hash">{{ signature }}</code>
+        {% if is_pdf is defined and is_pdf %}
+            {# Self-contained validation data embedded in the document itself, so
+               the PDF stays verifiable even if the signature record is purged. #}
+            <div class="signature-validation">
+                <span class="signature-meta__label">Assinatura criptográfica (RSA-SHA256)</span>
+                <code class="signature-hash">{{ signature }}</code>
 
-            {% if signature_evidence_base64 is defined and signature_evidence_base64 %}
-                <span class="signature-meta__label">Evidência em base64</span>
-                <code>{{ signature_evidence_base64 }}</code>
-            {% endif %}
-        </details>
+                {% if signature_evidence_base64 is defined and signature_evidence_base64 %}
+                    <span class="signature-meta__label">Evidência da assinatura (base64)</span>
+                    <code class="signature-hash">{{ signature_evidence_base64 }}</code>
+                {% endif %}
+
+                <p class="signature-note signature-validation__hint">Documento autovalidável: a integridade pode ser reverificada com a chave pública da IZI Internet aplicada sobre a evidência e a assinatura acima.</p>
+            </div>
+        {% else %}
+            <details class="signature-technical">
+                <summary>Dados técnicos da assinatura</summary>
+                <span class="signature-meta__label">Assinatura criptográfica</span>
+                <code class="signature-hash">{{ signature }}</code>
+
+                {% if signature_evidence_base64 is defined and signature_evidence_base64 %}
+                    <span class="signature-meta__label">Evidência em base64</span>
+                    <code class="signature-hash">{{ signature_evidence_base64 }}</code>
+                {% endif %}
+            </details>
+        {% endif %}
     </section>
 {% endif %}

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\DTO\AuthMainDto;
 use App\Entity\Contracts;
+use App\Message\FinalizeContractNotification;
 use App\Repository\ContractsRepository;
 use App\Services\ContractSignatureService;
 use App\Services\CreateContractService;
@@ -15,6 +16,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 class MainController extends AbstractController
@@ -188,7 +190,8 @@ class MainController extends AbstractController
     public function saveAll(
         Contracts $contract,
         CreateContractService $contractService,
-        SigningFlowService $signingFlowService
+        SigningFlowService $signingFlowService,
+        MessageBusInterface $bus
     ): Response
     {
         $this->logger->info('Finalizing contract', [
@@ -208,7 +211,18 @@ class MainController extends AbstractController
             return $this->redirect($nextUrl);
         }
 
-        // nenhum pendente → encerra
+        // nenhum pendente → encerra. Dispara a geração+notificação por evento
+        // (caminho rápido). Envolto em try/catch: se o broker estiver fora, o
+        // usuário não percebe e os jobs periódicos concluem como fallback.
+        try {
+            $bus->dispatch(new FinalizeContractNotification($contract->getId()));
+        } catch (\Throwable $exception) {
+            $this->logger->error('Could not enqueue finalize notification', [
+                'contract_id' => $contract->getId(),
+                'error' => $exception->getMessage(),
+            ]);
+        }
+
         return $this->render('main/success.html.twig', [
             'signature_progress' => $signingFlowService->progress($contract),
         ]);

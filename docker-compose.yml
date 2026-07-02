@@ -18,6 +18,19 @@ services:
       timeout: 5s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   php:
     build:
       context: ./docker
@@ -28,6 +41,8 @@ services:
     working_dir: /app
     depends_on:
       db:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     env_file:
       - .env
@@ -64,6 +79,7 @@ networks:
 volumes:
   var_data:
   certs_data:
+  redis_data:
 #  adminer:
 #    image: adminer
 #    restart: always
