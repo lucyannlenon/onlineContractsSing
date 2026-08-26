@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Entity\Contracts;
 use App\Entity\ContractSignature;
 use App\Repository\ContractsRepository;
+use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Psr\Log\LoggerInterface;
 
 readonly class ContractSignatureService
@@ -83,7 +84,19 @@ readonly class ContractSignatureService
         $singContract->setSignature($sing);
         $singContract->setEvidence($evidence);
 
-        $this->contractsRepository->save($contracts);
+        try {
+            $this->contractsRepository->save($contracts);
+        } catch (UniqueConstraintViolationException) {
+            // Two concurrent requests (e.g. a double-click) raced to sign the
+            // same document; the other one already persisted an equivalent
+            // signature, so there is nothing left to do here.
+            $this->logger->warning('Concurrent signature request for the same document, discarding duplicate', [
+                'contract_id' => $contracts->getId(),
+                'name' => $name
+            ]);
+            return;
+        }
+
         $this->logger->info('Updated contract signature', [
             'contract_id' => $contracts->getId(),
             'name' => $name
