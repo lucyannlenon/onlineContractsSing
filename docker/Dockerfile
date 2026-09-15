@@ -1,7 +1,34 @@
 # Base image PHP 8.3 FPM (Debian bullseye)
 FROM php:8.3-fpm-bullseye
 
-RUN apt-get update && apt-get install -y \
+# Debian bullseye went EOL: deb.debian.org/debian-security no longer serves it
+# (404s on apt-get update). snapshot.debian.org has a *permanent* content gap
+# for bullseye-security's pool/updates/main path specifically — several
+# packages this build needs (openssl, curl, icu, libpng, libxml2-dev,
+# librabbitmq, sqlite3, sudo, unzip) 404 there regardless of which snapshot
+# date is picked (confirmed against two different dates), even though the
+# same files are individually reachable via snapshot's by-hash /file/
+# endpoint — so pinning to a snapshot date does not fix it, only dropping the
+# security suite does. Pin to snapshot.debian.org's plain bullseye +
+# bullseye-updates only (reliable) instead, and force the handful of runtime
+# libs the base image already ships at a newer (security-patched) version
+# down to the version "main" offers — their -dev packages pin an exact
+# version match, so apt would otherwise refuse with "held broken packages".
+# This trades the latest OS-level security patches for a working local/dev
+# build only; production deploys are a separate pipeline
+# (docker-compose-production.yml) untouched by this.
+RUN { \
+    echo 'deb http://snapshot.debian.org/archive/debian/20260915T082008Z bullseye main'; \
+    echo 'deb http://snapshot.debian.org/archive/debian/20260915T082008Z bullseye-updates main'; \
+    } > /etc/apt/sources.list \
+ && echo 'Acquire::Check-Valid-Until "false";' > /etc/apt/apt.conf.d/99no-check-valid-until
+
+RUN apt-get update && apt-get install -y --no-install-recommends --allow-downgrades \
+    libcurl4=7.74.0-1.3+deb11u13 \
+    libicu67=67.1-7 \
+    libsqlite3-0=3.34.1-3 \
+    libssl1.1=1.1.1w-0+deb11u1 \
+    libxml2=2.9.10+dfsg-6.7+deb11u4 \
     unzip \
     zip \
     libcurl4-openssl-dev \
@@ -22,6 +49,7 @@ RUN apt-get update && apt-get install -y \
     sudo \
     wget \
     supervisor \
+ && apt-get install -y curl \
  && docker-php-ext-install \
     mysqli \
     bcmath \
