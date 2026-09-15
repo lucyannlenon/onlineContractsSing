@@ -63,6 +63,12 @@ class MainController extends AbstractController
             ]);
         }
 
+        if ($item->isCanceled()) {
+            return $this->render('main/index.html.twig', [
+                'error' => "Este contrato não está mais disponível para assinatura"
+            ]);
+        }
+
         $nextUrl = $signingFlowService->nextPendingDocumentUrl($item);
         if ($nextUrl !== null) {
             return $this->redirect($nextUrl);
@@ -85,6 +91,10 @@ class MainController extends AbstractController
             'contract_id' => $contract->getId(),
             'contract_type' => $contract->getContractType()?->name
         ]);
+
+        if ($contract->isCanceled()) {
+            return $this->redirectToCanceledError();
+        }
 
         if (!$signingFlowService->isTemplateContract($contract)) {
             if ($contract->getSignaturesByName(SigningFlowService::DOCUMENT_ACCEPT_TERM)) {
@@ -125,6 +135,10 @@ class MainController extends AbstractController
         $this->logger->info('Processing term acceptance', [
             'contract_id' => $contract->getId()
         ]);
+
+        if ($contract->isCanceled()) {
+            return $this->redirectToCanceledError();
+        }
 
         $acceptKey = $request->get('accept-key', false);
         if (!$acceptKey && $contract->getSignaturesByName(SigningFlowService::DOCUMENT_ACCEPT_TERM)) {
@@ -167,6 +181,9 @@ class MainController extends AbstractController
             'contract_id' => $contract->getId()
         ]);
 
+        if ($contract->isCanceled()) {
+            return $this->redirectToCanceledError();
+        }
 
         $payload = $contract->getPayload();
         $acceptKey = $request->get('accept-key', false);
@@ -228,6 +245,11 @@ class MainController extends AbstractController
         return $this->render('main/success.html.twig', [
             'signature_progress' => $signingFlowService->progress($contract),
         ]);
+    }
+
+    private function redirectToCanceledError(): Response
+    {
+        return $this->redirectToRoute('app_main', ['message' => 'Este contrato não está mais disponível para assinatura']);
     }
 
     private function clientInfo(Request $request): array

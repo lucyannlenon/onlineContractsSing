@@ -80,6 +80,11 @@ class ContractsRepository extends ServiceEntityRepository
             ->andWhere('c.cpf = :cpf')
             ->andWhere('c.birthday = :birthday')
             ->andWhere('c.createdAt BETWEEN :from AND :to')
+            // A canceled contract (e.g. the source system replaced/superseded it
+            // before the client got to sign it) must never be offered up for
+            // signature nor block/skip the chain — it's simply excluded from the
+            // batch, same as if it had never existed.
+            ->andWhere('c.canceled = false')
             ->setParameter('cpf', $reference->getCpf())
             ->setParameter('birthday', $reference->getBirthday())
             ->setParameter('from', $createdAt->modify("-{$window} seconds"))

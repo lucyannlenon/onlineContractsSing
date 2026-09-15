@@ -51,6 +51,12 @@ class Contracts
     #[ORM\Column]
     private ?bool $notified = false;
 
+    #[ORM\Column]
+    private bool $canceled = false;
+
+    #[ORM\Column(nullable: true)]
+    private ?\DateTimeImmutable $canceledAt = null;
+
     public function getContractType(): ?ContractTypeEnum
     {
         return $this->contractType;
@@ -206,6 +212,24 @@ class Contracts
         return $this;
     }
 
+    public function isCanceled(): bool
+    {
+        return $this->canceled;
+    }
+
+    public function getCanceledAt(): ?\DateTimeImmutable
+    {
+        return $this->canceledAt;
+    }
+
+    public function cancel(\DateTimeImmutable $canceledAt): static
+    {
+        $this->canceled = true;
+        $this->canceledAt = $canceledAt;
+
+        return $this;
+    }
+
     public function toArray(): array
     {
         return [
@@ -219,7 +243,9 @@ class Contracts
             'signatures' => $this->getSignatures()->map(fn($signature) => $signature->toArray())->toArray(),
             'createdAt' => $this->getCreatedAt()?->format('Y-m-d H:i:s'),
             'finish' => $this->isFinish(),
-            'notified' => $this->isNotified()
+            'notified' => $this->isNotified(),
+            'canceled' => $this->isCanceled(),
+            'canceledAt' => $this->getCanceledAt()?->format('Y-m-d H:i:s'),
         ];
     }
 }
